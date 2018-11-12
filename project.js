@@ -13,19 +13,28 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-//Cube1
+//update viewport on resize
+window.addEventListener('resize', function (){
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+})
+
+//Cube1 white
 var geometry = new THREE.BoxGeometry(1, 1, 1);
 var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-//Cube2
+//Cube2 green
 var geometry2 = new THREE.BoxGeometry(1, 1, 1);
 var material2 = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 var cube2 = new THREE.Mesh(geometry2, material2);
 scene.add(cube2);
 
-//Cube3
+//Cube3 red
 var geometry3 = new THREE.BoxGeometry(0.05, 0.05, 0.05);
 var material3 = new THREE.MeshBasicMaterial({ color: 0xee2a00, wireframe: true });
 var cube3 = new THREE.Mesh(geometry3, material3);
@@ -45,14 +54,17 @@ var render = function () {
     renderer.render(scene, camera);
 }
 
+//updates the scene before render
 var update = function () {
+    posFigure(cube, 1, 0, 0.05, 0.05);
+    posFigure(cube2, -1, 0, 0.2, 0.1);
+    posFigure(cube3, 0, 0, -0.05, -0.05);
 }
 
+//runs the program
 var loop = function () {
     requestAnimationFrame(loop);
-    posFigure(cube, 1, 0, 0.05, 0.05);
-    posFigure(cube2, -1, 0, 1, 1);
-    posFigure(cube3, 0, 0, -0.05, -0.05);
+    
     update();
     render();
 }
