@@ -48255,13 +48255,14 @@
 })));
 },{}],2:[function(require,module,exports){
 const THREE = require('./js/three');
+//THREE = require('./js/OrbitControls');
+//THREErequire('./js/OrbitControls');
 
 /**
  * ##############################################################################################
  * ##############################################################################################
  * ##############################################################################################
  */
-
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -48278,9 +48279,25 @@ window.addEventListener('resize', function (){
     camera.updateProjectionMatrix();
 })
 
-//Cube1 white
+//controls
+//controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+
+//shape
 var geometry = new THREE.BoxGeometry(1, 1, 1);
-var material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+
+//textures & colors
+var cube1materials = [
+  new THREE.MeshBasicMaterial({color: 0x458000, side: THREE.DoubleSide}),//right side
+  new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'), side: THREE.DoubleSide}),//left side
+  new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide}),// top
+  new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('imgs/TestTextureMetal.jpg'), side: THREE.DoubleSide}),// bottom side
+  new THREE.MeshBasicMaterial({color: 0x0080FF, side: THREE.DoubleSide}),//front side
+  new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('imgs/TestTextureWater.jpg'), side: THREE.DoubleSide})// back side
+];
+
+//Cube1 white
+var material = new THREE.MeshFaceMaterial(cube1materials);
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
@@ -48312,7 +48329,7 @@ var render = function () {
 
 //updates the scene before render
 var update = function () {
-    posFigure(cube, 1, 0, 0.05, 0.05);
+    posFigure(cube, 1, 0, 0.01, 0.01);
     posFigure(cube2, -1, 0, 0.2, 0.1);
     posFigure(cube3, 0, 0, -0.05, -0.05);
 }
@@ -48320,7 +48337,7 @@ var update = function () {
 //runs the program
 var loop = function () {
     requestAnimationFrame(loop);
-    
+
     update();
     render();
 }
