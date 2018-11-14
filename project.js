@@ -1,6 +1,6 @@
 
 let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100000);
 
 let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -18,6 +18,47 @@ window.addEventListener('resize', function () {
 //controls
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+
+//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// SKYBOX ///////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+let geometrySky = new THREE.CubeGeometry(100000,100000,100000);
+let skyMaterials = [
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/front.png"), side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/back.png"), side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/up.png"), side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/down.png"), side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/right.png"), side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load("./Skybox/BloodValley/left.png"), side: THREE.DoubleSide}),
+];
+//let material2 = new THREE.MeshFaceMaterial(cube2materials);
+let skyCube = new THREE.Mesh(geometrySky, skyMaterials);
+scene.add(skyCube);
+
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////// MODEL OF THE ROOM AND COMPONENTS //////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+// Instantiate a loader
+let loader = new THREE.GLTFLoader();
+
+// Load a glTF resource
+loader.load(
+    // resource URL
+    './3dModel/Room/scene.gltf',
+    // called when the resource is loaded
+    function ( gltf ) {
+
+        scene.add( gltf.scene );
+
+      /*  gltf.animations; // Array<THREE.AnimationClip>
+       gltf.scene; // THREE.Scene
+       gltf.scenes; // Array<THREE.Scene>
+       gltf.cameras; // Array<THREE.Camera>
+       gltf.asset; // Object*/
+
+    },
+
+);
 
 //shape
 let geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -65,64 +106,70 @@ let cube2materials = [
 let cube2 = new THREE.Mesh(geometry2, cube2materials);
 scene.add(cube2);
 
-camera.position.z = 2;
+camera.position.z = 250;
+camera.position.y = 250;
+camera.position.x = 0;
+camera.rotation.x -= 0.3;
 
 
 //Wallway
 
 //Floor
-let floorGeometry = new THREE.CubeGeometry(10, 1, 10);
+let floorGeometry = new THREE.CubeGeometry(100, 10, 100);
 let floorMaterial = new THREE.MeshLambertMaterial({
     map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide
 });
 let floorCube = new THREE.Mesh(floorGeometry, floorMaterial);
-floorCube.position.y = -4.5;
+floorCube.position.y = 5;
 scene.add(floorCube);
 
 //Ceiling
-let ceilingGeometry = new THREE.CubeGeometry(10, 1, 10);
+let ceilingGeometry = new THREE.CubeGeometry(100, 10, 100);
 let ceilingMaterial = new THREE.MeshLambertMaterial({
     map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide
 });
 let ceilingCube = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
-ceilingCube.position.y = 4.5;
+ceilingCube.position.y = 95;
 scene.add(ceilingCube);
 
 //Left Wall
-let leftWallGeometry = new THREE.CubeGeometry(1, 10, 10);
+let leftWallGeometry = new THREE.CubeGeometry(10, 100, 100);
 let leftWallMaterial = new THREE.MeshLambertMaterial({
     map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide
 });
 let leftWallCube = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
-leftWallCube.position.x = 4.5;
+leftWallCube.position.x = 45;
+leftWallCube.position.y = 50;
 scene.add(leftWallCube);
 
 //Right Wall
-let rightWallGeometry = new THREE.CubeGeometry(1, 10, 10);
+let rightWallGeometry = new THREE.CubeGeometry(10, 100, 100);
 let rightWallMaterial = new THREE.MeshLambertMaterial({
     map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide
 });
 let rightWallCube = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
-rightWallCube.position.x = -4.5;
+rightWallCube.position.x = -45;
+rightWallCube.position.y = 50;
 scene.add(rightWallCube);
 
 //Back Wall
-let backWallGeometry = new THREE.CubeGeometry(10, 10, 1);
+let backWallGeometry = new THREE.CubeGeometry(100, 100, 10);
 let backWallMaterial = new THREE.MeshLambertMaterial({
     map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide
 });
 let backWallCube = new THREE.Mesh(backWallGeometry, backWallMaterial);
-backWallCube.position.z = -4.5;
+backWallCube.position.z = -45;
+backWallCube.position.y = 50;
 scene.add(backWallCube);
 
 
 //Lights
-let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.3);
+let ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
 scene.add(ambientLight);
 
 let light1 = new THREE.PointLight(0xFF0040, 4, 50);
@@ -131,37 +178,38 @@ let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 //let directionalLight = new THREE.DirectionalLight(0x6BFA6B, 4, 50);
 //scene.add(directionalLight);
 
-let spotlight1 = new THREE.SpotLight(0xFFFFFF, 0.5, 50);
-spotlight1.position.y = 8;
-spotlight1.position.z = 16;
+//RED SPOTLIGHT
+let spotlight1 = new THREE.SpotLight(0xFFFFFF, 6.5, 150);
+spotlight1.position.y = 150;
+spotlight1.position.z = 160;
 scene.add(spotlight1);
 
-let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.5, 50);
-spotlight2.position.y = 8;
-spotlight2.position.z =-16;
+//WHITE SPOTLIGHT
+let spotlight2 = new THREE.SpotLight(0xFFFFFF, 6.5, 150);
+spotlight2.position.y = 150;
+spotlight2.position.z =-160;
 scene.add(spotlight2);
 
-let spotlight3 = new THREE.SpotLight(0xFFFFFF, 0.5, 50);
-spotlight3.position.y = 8;
-spotlight3.position.x = 16;
+//ORANGE SPOTLIGHT
+let spotlight3 = new THREE.SpotLight(0xFFFFFF, 6.5, 150);
+spotlight3.position.y = 150;
+spotlight3.position.x = 160;
 scene.add(spotlight3);
 
-let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.5, 50);
-spotlight4.position.y = 8;
-spotlight4.position.x =-16;
+//GREEN SPOTLIGHT
+let spotlight4 = new THREE.SpotLight(0xFFFFFF, 6.5, 150);
+spotlight4.position.y = 150;
+spotlight4.position.x =-160;
 scene.add(spotlight4);
 
 //Spheres for the lights
-let geometryS1 = new THREE.SphereGeometry(0.75, 32, 32);
+/*let geometryS1 = new THREE.SphereGeometry(0.75, 32, 32);
 let materialS1 = new THREE.MeshBasicMaterial({color: 0xffCC00});
 let sphereS1 = new THREE.Mesh(geometryS1, materialS1);
-scene.add(sphereS1);
+scene.add(sphereS1);*/
 
-let geometryS2 = new THREE.SphereGeometry(0.75, 32, 32);
-let materialS2 = new THREE.MeshBasicMaterial({color: 0xffff00});
-let sphereS2 = new THREE.Mesh(geometryS2, materialS2);
-scene.add(sphereS2);
 
+//RED SPOTLIGHT
 let geometryC1 = new THREE.BoxGeometry(0.5,0.5,0.75);
 let materialC1 = new THREE.MeshLambertMaterial({color:0xFF0000});
 let cubeC1 = new THREE.Mesh(geometryC1,materialC1);
@@ -171,6 +219,7 @@ cubeC1.position.z = spotlight1.position.z;
 cubeC1.rotation.x-=0.5;
 scene.add(cubeC1);
 
+//WHITE SPOTLIGHT
 let geometryC2 = new THREE.BoxGeometry(0.5,0.5,0.75);
 let materialC2 = new THREE.MeshLambertMaterial({color:0xFFFFFF});
 let cubeC2 = new THREE.Mesh(geometryC2,materialC2);
@@ -180,6 +229,7 @@ cubeC2.position.z = spotlight2.position.z;
 cubeC2.rotation.x+=0.5;
 scene.add(cubeC2);
 
+//ORANGE SPOTLIGHT
 let geometryC3 = new THREE.BoxGeometry(0.75,0.5,0.5);
 let materialC3 = new THREE.MeshLambertMaterial({color:0xFFAA32});
 let cubeC3 = new THREE.Mesh(geometryC3,materialC3);
@@ -189,6 +239,7 @@ cubeC3.position.z = spotlight3.position.z;
 cubeC3.rotation.z+=0.5;
 scene.add(cubeC3);
 
+//GREEN SPOTLIGHT
 let geometryC4 = new THREE.BoxGeometry(0.75,0.5,0.5);
 let materialC4 = new THREE.MeshLambertMaterial({color:0x00FF00});
 let cubeC4 = new THREE.Mesh(geometryC4,materialC4);
