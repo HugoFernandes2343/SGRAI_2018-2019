@@ -475,14 +475,8 @@ scene.add( cylinder );
 */
 
 
-
-
-
-
-
-
 //Lights
-let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.8);
+let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
 scene.add(ambientLight);
 
 let light1 = new THREE.PointLight(0xFF0040, 4, 50);
@@ -492,90 +486,96 @@ let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 //scene.add(directionalLight);
 
 //RED SPOTLIGHT
-let spotlight1 = new THREE.SpotLight(0xF3F3F3, 1, 400);
-spotlight1.position.y = 300;
-spotlight1.position.z = 250;
+let spotlight1 = new THREE.SpotLight(0xFFFFFF, 0.5);
+spotlight1.position.set(0, 250, 150);
+spotlight1.lookAt(0, 0, 0);
 scene.add(spotlight1);
 
 //WHITE SPOTLIGHT
-let spotlight2 = new THREE.SpotLight(0xF3F3F3, 1, 400);
-spotlight2.position.y = 300;
-spotlight2.position.z =-250;
+let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.5);
+spotlight2.position.set(0, 250, -150);
+// spotlight2.position.y = 150;
+// spotlight2.position.z =-150;
+spotlight2.lookAt(0, 0, 0);
 scene.add(spotlight2);
 
 //ORANGE SPOTLIGHT
-let spotlight3 = new THREE.SpotLight(0xF3F3F3, 1, 400);
-spotlight3.position.y = 300;
-spotlight3.position.x = 250;
+let spotlight3 = new THREE.SpotLight(0xFFFFFF, 0.5);
+spotlight3.position.set(150, 250, 0);
+// spotlight3.position.y = 150;
+// spotlight3.position.x = 150;
+spotlight3.lookAt(0, 0, 0);
 scene.add(spotlight3);
 
 //GREEN SPOTLIGHT
-let spotlight4 = new THREE.SpotLight(0xF3F3F3, 1, 400);
-spotlight4.position.y = 300;
-spotlight4.position.x =-250;
+let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.5);
+spotlight4.position.set(-150, 250, 0);
+// spotlight4.position.y = 150;
+// spotlight4.position.x =-150;
+spotlight4.lookAt(0, 0, 0);
 scene.add(spotlight4);
 
-//Spheres for the lights
-/*let geometryS1 = new THREE.SphereGeometry(0.75, 32, 32);
-let materialS1 = new THREE.MeshBasicMaterial({color: 0xffCC00});
-let sphereS1 = new THREE.Mesh(geometryS1, materialS1);
-scene.add(sphereS1);*/
-
-
 //RED SPOTLIGHT
-let geometryC1 = new THREE.BoxGeometry(5,5,7.5);
-let materialC1 = new THREE.MeshLambertMaterial({color:0xFF0000});
-let cubeC1 = new THREE.Mesh(geometryC1,materialC1);
-cubeC1.position.x = spotlight1.position.x;
-cubeC1.position.y = spotlight1.position.y;
-cubeC1.position.z = spotlight1.position.z;
-cubeC1.rotation.x-=0.5;
-scene.add(cubeC1);
+//let geometryC1 = new THREE.BoxGeometry(5,5,7.5);
+let geometryC1 = new THREE.SphereGeometry(3, 32, 32);
+let materialC1 = new THREE.MeshLambertMaterial({color: 0xFF0000});
+let bulb1 = new THREE.Mesh(geometryC1, materialC1);
+bulb1.position.set(spotlight1.position.x, spotlight1.position.y, spotlight1.position.z);
+//bulb1.rotation.x-=0.5;
+scene.add(bulb1);
 
 //WHITE SPOTLIGHT
-let geometryC2 = new THREE.BoxGeometry(5,5,7.5);
-let materialC2 = new THREE.MeshLambertMaterial({color:0xFFFFFF});
-let cubeC2 = new THREE.Mesh(geometryC2,materialC2);
-cubeC2.position.x = spotlight2.position.x;
-cubeC2.position.y = spotlight2.position.y;
-cubeC2.position.z = spotlight2.position.z;
-cubeC2.rotation.x+=0.5;
-scene.add(cubeC2);
+//let geometryC2 = new THREE.BoxGeometry(5,5,7.5);
+let geometryC2 = new THREE.SphereGeometry(3, 32, 32);
+let materialC2 = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+let bulb2 = new THREE.Mesh(geometryC2, materialC2);
+bulb2.position.set(spotlight2.position.x, spotlight2.position.y, spotlight2.position.z);
+//bulb2.rotation.x+=0.5;
+scene.add(bulb2);
 
 //ORANGE SPOTLIGHT
-let geometryC3 = new THREE.BoxGeometry(7.5,5,5);
-let materialC3 = new THREE.MeshLambertMaterial({color:0xFFAA32});
-let cubeC3 = new THREE.Mesh(geometryC3,materialC3);
-cubeC3.position.x = spotlight3.position.x;
-cubeC3.position.y = spotlight3.position.y;
-cubeC3.position.z = spotlight3.position.z;
-cubeC3.rotation.z+=0.5;
-scene.add(cubeC3);
+//let geometryC3 = new THREE.BoxGeometry(5,5,7.5);
+let geometryC3 = new THREE.SphereGeometry(3, 32, 32);
+let materialC3 = new THREE.MeshLambertMaterial({color: 0xFFAA32});
+let bulb3 = new THREE.Mesh(geometryC3, materialC3);
+bulb3.position.set(spotlight3.position.x, spotlight3.position.y, spotlight3.position.z);
+//bulb3.rotation.z+=0.5;
+scene.add(bulb3);
 
 //GREEN SPOTLIGHT
-let geometryC4 = new THREE.BoxGeometry(7.5,5,5);
-let materialC4 = new THREE.MeshLambertMaterial({color:0x00FF00});
-let cubeC4 = new THREE.Mesh(geometryC4,materialC4);
-cubeC4.position.x = spotlight4.position.x;
-cubeC4.position.y = spotlight4.position.y;
-cubeC4.position.z = spotlight4.position.z;
-cubeC4.rotation.z-=0.5;
-scene.add(cubeC4);
-
-/*
-let geometryC6 = new THREE.SphereGeometry(0.75, 32, 32);
-let materialC6 = new THREE.MeshBasicMaterial({color: 0xffCC00});
-let sphereC6 = new THREE.Mesh(geometryC6, materialC6);
-sphereC6.position.y= spotlight4.position.y;
-sphereC6.position.x = spotlight4.position.x;
-scene.add(sphereC6);*/
-
+//let geometryC4 = new THREE.BoxGeometry(5,5,7.5);
+let geometryC4 = new THREE.SphereGeometry(3, 32, 32);
+let materialC4 = new THREE.MeshLambertMaterial({color: 0x00FF00});
+let bulb4 = new THREE.Mesh(geometryC4, materialC4);
+bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);
+//bulb4.rotation.z-=0.5;
+scene.add(bulb4);
 
 function posFigure(figure, posX, posY, rotX, rotY) {
     figure.position.x = posX;
     figure.position.y = posY;
     figure.rotation.x += rotX;
     figure.rotation.y += rotY;
+}
+
+function rotateLights() {
+    let time = Date.now() * 0.0005;
+
+    spotlight1.position.x = -1*Math.cos(time)* 100;
+    spotlight1.position.z = Math.sin(time)* 100;
+    bulb1.position.set(spotlight1.position.x, spotlight1.position.y, spotlight1.position.z);
+
+    spotlight2.position.x = Math.cos(time)* 100;
+    spotlight2.position.z = -1*Math.sin(time)* 100;
+    bulb2.position.set(spotlight2.position.x, spotlight2.position.y, spotlight2.position.z);
+
+    spotlight3.position.x = -1*Math.sin(time)* 100;
+    spotlight3.position.z = -1*Math.cos(time)* 100;
+    bulb3.position.set(spotlight3.position.x, spotlight3.position.y, spotlight3.position.z);
+
+    spotlight4.position.x = Math.sin(time)* 100;
+    spotlight4.position.z = Math.cos(time)* 100;
+    bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);
 }
 
 //draw scene
@@ -588,27 +588,9 @@ let update = function () {
     // posFigure(cube, 1, 0, 0.01, 0.01);
     // posFigure(cube2, 0, 0, -0.05, -0.05);
 
-    // let time = Date.now() * 0.0005;
+    rotateLights();
 
-    /*  light1.position.x = Math.sin(time = 0.7) * 15;
-      light1.position.y = Math.sin(time = 0.4) * 26;
-      light1.position.z = Math.cos(time = 0.3) * 30;
 
-      directionalLight.position.x = Math.cos(time = 0.5)*20;
-      directionalLight.position.y = Math.cos(time = 0.5)*20;
-      directionalLight.position.z = Math.cos(time = 0.5)*20;
-
-      spotlight1.position.x = Math.cos(time = 0.5)*20;
-      spotlight1.position.y = Math.cos(time = 0.5)*20;
-      spotlight1.position.z = Math.cos(time = 0.5)*20;
-
-      spotlight1.position.x = Math.cos(time = 0.5)*20;
-      spotlight1.position.y = Math.cos(time = 0.5)*20;
-      spotlight1.position.z = Math.cos(time = 0.5)*20;
-
-      spotlight1.position.x = Math.cos(time = 0.5)*20;
-      spotlight1.position.y = Math.cos(time = 0.5)*20;
-      spotlight1.position.z = Math.cos(time = 0.5)*20;*/
 
 }
 
