@@ -132,7 +132,7 @@ scene.add(floor);
 //Ceiling
 let ceilingGeometry = new THREE.CubeGeometry(77.5, 2.5, 35);
 let ceilingMaterial = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+    map: new THREE.TextureLoader().load('imgs/TestTextureWater.jpg'),
     side: THREE.DoubleSide
 });
 let ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
@@ -449,6 +449,14 @@ scene.add(door2D);
 
 
 
+//Group door right
+var rightDoor = new THREE.Group();
+rightDoor.add(woodStripR1);
+rightDoor.add(woodStripR2);
+rightDoor.add(woodStripR3);
+rightDoor.add(glassStripR);
+rightDoor.add(door1D);
+scene.add(rightDoor);
 
 /*//Middle Wall
 let midWallGeometry = new THREE.CubeGeometry(5, 198, 98);
@@ -486,13 +494,13 @@ let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 //scene.add(directionalLight);
 
 //RED SPOTLIGHT
-let spotlight1 = new THREE.SpotLight(0xFFFFFF, 0.5);
+let spotlight1 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight1.position.set(0, 250, 150);
 spotlight1.lookAt(0, 0, 0);
 scene.add(spotlight1);
 
 //WHITE SPOTLIGHT
-let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.5);
+let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight2.position.set(0, 250, -150);
 // spotlight2.position.y = 150;
 // spotlight2.position.z =-150;
@@ -500,7 +508,7 @@ spotlight2.lookAt(0, 0, 0);
 scene.add(spotlight2);
 
 //ORANGE SPOTLIGHT
-let spotlight3 = new THREE.SpotLight(0xFFFFFF, 0.5);
+let spotlight3 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight3.position.set(150, 250, 0);
 // spotlight3.position.y = 150;
 // spotlight3.position.x = 150;
@@ -508,7 +516,7 @@ spotlight3.lookAt(0, 0, 0);
 scene.add(spotlight3);
 
 //GREEN SPOTLIGHT
-let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.5);
+let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight4.position.set(-150, 250, 0);
 // spotlight4.position.y = 150;
 // spotlight4.position.x =-150;
@@ -578,6 +586,34 @@ function rotateLights() {
     bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);
 }
 
+/*
+// obj - your object (THREE.Object3D or derived)
+// point - the point of rotation (THREE.Vector3)
+// axis - the axis of rotation (normalized THREE.Vector3)
+// theta - radian value of rotation
+// pointIsWorld - boolean indicating the point is in world coordinates (default = false)
+function rotateAboutPoint(obj, point, axis, theta, pointIsWorld){
+    pointIsWorld = (pointIsWorld === undefined)? false : pointIsWorld;
+
+    if(pointIsWorld){
+        obj.parent.localToWorld(obj.position); // compensate for world coordinate
+    }
+
+    obj.position.sub(point); // remove the offset
+    obj.position.applyAxisAngle(axis, theta); // rotate the POSITION
+    obj.position.add(point); // re-add the offset
+
+    if(pointIsWorld){
+        obj.parent.worldToLocal(obj.position); // undo world coordinates compensation
+    }
+
+    obj.rotateOnAxis(axis, theta); // rotate the OBJECT
+}
+*/
+
+var vec = new THREE.Vector3(-19.75,99,0);
+var vec2 = new THREE.Vector3(-19.5,95,0);
+
 //draw scene
 let render = function () {
     renderer.render(scene, camera);
@@ -589,6 +625,12 @@ let update = function () {
     // posFigure(cube2, 0, 0, -0.05, -0.05);
 
     rotateLights();
+   // rightDoor.rotation.z += 0.1;
+   // rightDoor.rotation.y += 0.01;
+
+//rightDoor.rotateOnAxis(vec2,0.001);
+   //rotateAboutPoint(rightDoor,vec,vec2,0.010,true);
+
 
 
 
