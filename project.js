@@ -566,6 +566,27 @@ function posFigure(figure, posX, posY, rotX, rotY) {
     figure.rotation.y += rotY;
 }
 
+/**light switch
+ *
+ * @type {HTMLElement}
+ */
+let lightSwitch = document.getElementById('lights');
+lightSwitch.addEventListener('click', lightControl);
+
+function lightControl() {
+    if (spotlight1.intensity > 0 && spotlight2.intensity > 0 && spotlight3.intensity > 0 && spotlight4.intensity > 0) {
+        spotlight1.intensity = 0;
+        spotlight2.intensity = 0;
+        spotlight3.intensity = 0;
+        spotlight4.intensity = 0;
+    } else {
+        spotlight1.intensity = 1;
+        spotlight2.intensity = 1;
+        spotlight3.intensity = 1;
+        spotlight4.intensity = 1;
+    }
+}
+
 function rotateLights() {
     let time = Date.now() * 0.0005;
 
@@ -625,14 +646,6 @@ let update = function () {
     // posFigure(cube2, 0, 0, -0.05, -0.05);
 
     rotateLights();
-   // rightDoor.rotation.z += 0.1;
-   // rightDoor.rotation.y += 0.01;
-
-//rightDoor.rotateOnAxis(vec2,0.001);
-   //rotateAboutPoint(rightDoor,vec,vec2,0.010,true);
-
-
-
 
 }
 
