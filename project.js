@@ -146,7 +146,7 @@ scene.add(floor);
 //Ceiling
 let ceilingGeometry = new THREE.CubeGeometry(77.5, 2.5, 35);
 let ceilingMaterial = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureWater.jpg'),
+    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
     side: THREE.DoubleSide,
     emissive: null
 });
@@ -483,13 +483,22 @@ scene.add(door2D);
 
 
 //Group door right
-var rightDoor = new THREE.Group();
+var rightDoor = new THREE.Object3D();
 rightDoor.add(woodStripR1);
 rightDoor.add(woodStripR2);
 rightDoor.add(woodStripR3);
 rightDoor.add(glassStripR);
 rightDoor.add(door1D);
 scene.add(rightDoor);
+
+//Group left door
+var leftDoor = new THREE.Object3D();
+leftDoor.add(woodStripL1);
+leftDoor.add(woodStripL2);
+leftDoor.add(woodStripL3);
+leftDoor.add(glassStripL);
+leftDoor.add(door2D);
+scene.add(leftDoor);
 
 selectableObjects.push(rightDoor,door1D,door2D,
     glassStripL,glassStripR,woodStripL3,
@@ -676,6 +685,43 @@ var vec = new THREE.Vector3(-19.75, 99, 0);
 var vec2 = new THREE.Vector3(-19.5, 95, 0);
 
 
+/**light switch
+ *
+ * @type {HTMLElement}
+ */
+let closeSwitchR = document.getElementById('Open/Close R');
+closeSwitchR.addEventListener('click', closeControlR);
+
+function closeControlR() {
+    if(!(rightDoor.position.z == -21.5)){
+        rightDoor.position.z -= 21.5;
+        rightDoor.position.x -= 57;
+        rightDoor.rotation.y = Math.PI/2;}
+        else{
+        rightDoor.position.z += 21.5;
+        rightDoor.position.x += 57;
+        rightDoor.rotation.y -= Math.PI/2;
+    }
+}
+
+/**light switch
+ *
+ * @type {HTMLElement}
+ */
+let closeSwitchL = document.getElementById('Open/Close L');
+closeSwitchL.addEventListener('click', closeControlL);
+
+function closeControlL() {
+    if(!(leftDoor.position.z == 17.25)){
+        leftDoor.position.z = 17.25;
+        leftDoor.position.x = 58.5;
+        leftDoor.rotation.y = -Math.PI/2;}
+    else{
+        leftDoor.position.z -= 17.25;
+        leftDoor.position.x -= 58.5;
+        leftDoor.rotation.y += Math.PI/2;
+    }
+}
 var mouse = new THREE.Vector3(), INTERSECTED;
 
 window.addEventListener('mousemove', onMouseMove, false);
@@ -690,7 +736,7 @@ let picking = function () {
     // find intersections
     raycaster.setFromCamera(mouse, camera);
     //var intersects = raycaster.intersectObjects(scene.children, true);
-    var intersects = raycaster.intersectObjects(selectableObjects, true);
+    var intersects = raycaster.intersectObjects(selectableObjects,false);
 
     if (intersects.length > 0) {
         if (INTERSECTED != intersects[0].object) {
