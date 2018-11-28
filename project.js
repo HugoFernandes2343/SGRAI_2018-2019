@@ -1,9 +1,12 @@
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 100000);
 
+let selectableObjects = [];
+
 let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+renderer.autoclear = false; //otherwise only the main scene will be rendered.
 
 var raycaster = new THREE.Raycaster();
 
@@ -16,22 +19,17 @@ window.addEventListener('resize', function () {
     camera.updateProjectionMatrix();
 });
 
-//controls
-controls = new THREE.OrbitControls(camera, renderer.domElement);
-//controls.maxPolarAngle = 0.9 * Math.PI / 2; //impedir que a camera além do chao
-//controls.minDistance = 50; //Cannot enter inside object
-//controls.maxDistance = 420; // Cannot get out of the house
-
-
 //////////////////////////////////////////////////////////////////////////////////
-/////////////////////////// SKYBOX ///////////////////////////////////////////////
+////////////////////////////////// SKYBOX ////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
+
 let geometrySky = new THREE.SphereGeometry(100000, 25, 25);
 
-let skyMaterial = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("./Skybox/Room2.jpg"), side: THREE.BackSide });
+let skyMaterial = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/city.jpg"), side: THREE.BackSide });
 
 let skyGlobe = new THREE.Mesh(geometrySky, skyMaterial);
 scene.add(skyGlobe);
+
 /*
 let geometrySky = new THREE.CubeGeometry(100000, 100000, 100000);
 let skyMaterials = [
@@ -46,11 +44,19 @@ let skyMaterials = [
 let skyCube = new THREE.Mesh(geometrySky, skyMaterials);
 scene.add(skyCube);
 */
+
+
+//controls
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+//controls.maxPolarAngle = 0.9 * Math.PI / 2; //impedir que a camera além do chao
+//controls.minDistance = 50; //Cannot enter inside object
+//controls.maxDistance = 420; // Cannot get out of the house
+
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////// MODEL OF THE ROOM AND COMPONENTS //////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // Instantiate a loader
-/*
+
 let loader = new THREE.GLTFLoader();
 
 // Load a glTF resource
@@ -72,8 +78,6 @@ loader.load(
     },
 
 );
-*/
-
 
 //shape
 
@@ -487,6 +491,13 @@ rightDoor.add(glassStripR);
 rightDoor.add(door1D);
 scene.add(rightDoor);
 
+selectableObjects.push(rightDoor,door1D,door2D,
+    glassStripL,glassStripR,woodStripL3,
+    woodStripL2,woodStripL1,woodStripR3,
+    woodStripR2,woodStripR1,shelfGlass,
+    shelf4,shelf3,shelf2,shelf1,backWall,
+    rightWall,leftWall,ceiling,floor);
+
 /*//Middle Wall
 let midWallGeometry = new THREE.CubeGeometry(5, 198, 98);
 let midWallMaterial = new THREE.MeshLambertMaterial({
@@ -678,7 +689,8 @@ function onMouseMove(event) {
 let picking = function () {
     // find intersections
     raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(scene.children, true);
+    //var intersects = raycaster.intersectObjects(scene.children, true);
+    var intersects = raycaster.intersectObjects(selectableObjects, true);
 
     if (intersects.length > 0) {
         if (INTERSECTED != intersects[0].object) {
@@ -691,7 +703,6 @@ let picking = function () {
         if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
         INTERSECTED = null;
     }
-
 }
 
 /**
@@ -700,11 +711,16 @@ let picking = function () {
 
 //draw scene
 let render = function () {
+    renderer.clear();
+    renderer.clearDepth();
     renderer.render(scene, camera);
 }
 
 //updates the scene before render
 let update = function () {
+
+    controls.update();
+
     picking();
     rotateLights();
 }
@@ -712,7 +728,6 @@ let update = function () {
 //runs the program
 let loop = function () {
     requestAnimationFrame(loop);
-
     update();
     render();
 }
