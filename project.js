@@ -3,10 +3,12 @@ let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHei
 
 let selectableObjects = [];
 
-let renderer = new THREE.WebGLRenderer();
+let renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-renderer.autoclear = false; //otherwise only the main scene will be rendered.
+renderer.shadowMap.enabled = true;
+renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
 
 var raycaster = new THREE.Raycaster();
 
@@ -30,22 +32,6 @@ let skyMaterial = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().l
 let skyGlobe = new THREE.Mesh(geometrySky, skyMaterial);
 scene.add(skyGlobe);
 
-/*
-let geometrySky = new THREE.CubeGeometry(100000, 100000, 100000);
-let skyMaterials = [
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/front.png"), side: THREE.BackSide }),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/back.png"), side: THREE.BackSide }),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/up.png"), side: THREE.BackSide }),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/down.png"), side: THREE.BackSide }),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/right.png"), side: THREE.BackSide }),
-    new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./Skybox/BloodValley/left.png"), side: THREE.BackSide }),
-];
-//let material2 = new THREE.MeshFaceMaterial(cube2materials);
-let skyCube = new THREE.Mesh(geometrySky, skyMaterials);
-scene.add(skyCube);
-*/
-
-
 //controls
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 //controls.maxPolarAngle = 0.9 * Math.PI / 2; //impedir que a camera além do chao
@@ -65,6 +51,10 @@ loader.load(
     './3dModel/Room/scene.gltf',
     // called when the resource is loaded
     function (gltf) {
+
+        gltf.scene.traverse(function (node) {
+            if (node instanceof THREE.Mesh) { node.receiveShadow = true; }
+        });
 
         scene.add(gltf.scene);
         gltf.scene.translateY(-1);
@@ -243,15 +233,6 @@ let shelfGlassGeometry = new THREE.CubeGeometry(77.5, 1, 31.5);
 //refractCubeCamera = new THREE.CubeCamera(0.1,10000,128);
 //scene.add(refractCubeCamera);
 
-/*
-var urls  = [
-
-    "./Skybox/BloodValley/front.png","./Skybox/BloodValley/back.png",
-    "./Skybox/BloodValley/up.png","./Skybox/BloodValley/down.png",
-    "./Skybox/BloodValley/right.png","./Skybox/BloodValley/left.png"
-];*/
-
-
 //let textureCube = new THREE.CubeTextureLoader().load(urls);
 //textureCube.mapping = THREE.CubeRefractionMapping;
 //refractCubeCamera.renderTarget.mapping=
@@ -271,24 +252,6 @@ shelfGlass.position.y = 45;
 //refractCubeCamera.position = shelfGlass.position;
 scene.add(shelfGlass);
 
-/*
-var sphereGeom =  new THREE.SphereGeometry( 80, 64, 32 );
-refractSphereCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-scene.add( refractSphereCamera );
-
-refractSphereCamera.renderTarget.mapping = new THREE.CubeRefractionMapping();
-
-var refractMaterial = new THREE.MeshBasicMaterial( {
-    color: 0xccccff,
-    envMap: refractSphereCamera.renderTarget,
-    refractionRatio: 0.985,
-    reflectivity: 0.9
-} );
-
-refractSphere = new THREE.Mesh( sphereGeom, refractMaterial );
-refractSphere.position.set(0,50,0);
-refractSphereCamera.position = refractSphere.position;
-scene.add(refractSphere);*/
 //DOORS
 
 //top part
@@ -500,37 +463,28 @@ leftDoor.add(glassStripL);
 leftDoor.add(door2D);
 scene.add(leftDoor);
 
-selectableObjects.push(rightDoor,door1D,door2D,
-    glassStripL,glassStripR,woodStripL3,
-    woodStripL2,woodStripL1,woodStripR3,
-    woodStripR2,woodStripR1,shelfGlass,
-    shelf4,shelf3,shelf2,shelf1,backWall,
-    rightWall,leftWall,ceiling,floor);
+//add objects to the raycast selection range
+selectableObjects.push(rightDoor, door1D, door2D,
+    glassStripL, glassStripR, woodStripL3,
+    woodStripL2, woodStripL1, woodStripR3,
+    woodStripR2, woodStripR1, shelfGlass,
+    shelf4, shelf3, shelf2, shelf1, backWall,
+    rightWall, leftWall, ceiling, floor);
 
-/*//Middle Wall
-let midWallGeometry = new THREE.CubeGeometry(5, 198, 98);
-let midWallMaterial = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
-    side: THREE.DoubleSide
-});
-let midWallCube = new THREE.Mesh(midWallGeometry, midWallMaterial);
-midWallCube.position.z = 1;
-midWallCube.position.y = 100;
-scene.add(midWallCube);
-*/
-/*
-var geometry = new THREE.CylinderGeometry( 100, 20, 100, 32,1,false,0,Math.PI );
-var material = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
-    side: THREE.DoubleSide
-});
-var cylinder = new THREE.Mesh( geometry, material );
-cylinder.rotation.y = Math.PI / 2;
-cylinder.rotation.x = Math.PI / 2;
-cylinder.position.y = 300;
-scene.add( cylinder );
-*/
+//Cabinet full object
+let cabinetGroup = new THREE.Group();
+let cabinet = new THREE.Object3D();
 
+cabinetGroup.add(rightDoor, door1D, door2D,
+    glassStripL, glassStripR, woodStripL3,
+    woodStripL2, woodStripL1, woodStripR3,
+    woodStripR2, woodStripR1, shelfGlass,
+    shelf4, shelf3, shelf2, shelf1, backWall,
+    rightWall, leftWall, ceiling, floor);
+
+cabinet.add(cabinetGroup);
+cabinet.traverse(function (node) { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; } });
+scene.add(cabinet);
 
 //Lights
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
@@ -543,34 +497,46 @@ let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 //scene.add(directionalLight);
 
 //RED SPOTLIGHT
-let spotlight1 = new THREE.SpotLight(0xFFFFFF, 0.3);
-spotlight1.position.set(0, 250, 150);
+let spotlight1 = new THREE.SpotLight(0xFFFFFF, 1);
+spotlight1.position.set(0, 250, 250);
 spotlight1.lookAt(0, 0, 0);
+spotlight1.castShadow = true;
+spotlight1.shadowCameraVisible = true;
+spotlight1.shadowDarkness = 1;
 scene.add(spotlight1);
 
 //WHITE SPOTLIGHT
-let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.3);
+/*let spotlight2 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight2.position.set(0, 250, -150);
 // spotlight2.position.y = 150;
 // spotlight2.position.z =-150;
+spotlight2.castShadow = true;
+spotlight2.shadowCameraVisible = true;
+spotlight2.shadowDarkness = 1;
 spotlight2.lookAt(0, 0, 0);
-scene.add(spotlight2);
+scene.add(spotlight2);*/
 
 //ORANGE SPOTLIGHT
-let spotlight3 = new THREE.SpotLight(0xFFFFFF, 0.3);
-spotlight3.position.set(150, 250, 0);
+/*let spotlight3 = new THREE.SpotLight(0xFFFFFF, 1);
+spotlight3.position.set(250, 250, 150);
 // spotlight3.position.y = 150;
 // spotlight3.position.x = 150;
+spotlight3.castShadow = true;
+spotlight3.shadowCameraVisible = true;
+spotlight3.shadowDarkness = 1;
 spotlight3.lookAt(0, 0, 0);
-scene.add(spotlight3);
+scene.add(spotlight3);*/
 
 //GREEN SPOTLIGHT
-let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.3);
+/*let spotlight4 = new THREE.SpotLight(0xFFFFFF, 0.3);
 spotlight4.position.set(-150, 250, 0);
 // spotlight4.position.y = 150;
 // spotlight4.position.x =-150;
+spotlight4.castShadow = true;
+spotlight4.shadowCameraVisible = true;
+spotlight4.shadowDarkness = 1;
 spotlight4.lookAt(0, 0, 0);
-scene.add(spotlight4);
+scene.add(spotlight4);*/
 
 //RED SPOTLIGHT
 //let geometryC1 = new THREE.BoxGeometry(5,5,7.5);
@@ -583,30 +549,30 @@ scene.add(bulb1);
 
 //WHITE SPOTLIGHT
 //let geometryC2 = new THREE.BoxGeometry(5,5,7.5);
-let geometryC2 = new THREE.SphereGeometry(3, 32, 32);
+/*let geometryC2 = new THREE.SphereGeometry(3, 32, 32);
 let materialC2 = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
 let bulb2 = new THREE.Mesh(geometryC2, materialC2);
 bulb2.position.set(spotlight2.position.x, spotlight2.position.y, spotlight2.position.z);
 //bulb2.rotation.x+=0.5;
-scene.add(bulb2);
+scene.add(bulb2);*/
 
 //ORANGE SPOTLIGHT
 //let geometryC3 = new THREE.BoxGeometry(5,5,7.5);
-let geometryC3 = new THREE.SphereGeometry(3, 32, 32);
+/*let geometryC3 = new THREE.SphereGeometry(3, 32, 32);
 let materialC3 = new THREE.MeshLambertMaterial({ color: 0xFFAA32 });
 let bulb3 = new THREE.Mesh(geometryC3, materialC3);
 bulb3.position.set(spotlight3.position.x, spotlight3.position.y, spotlight3.position.z);
 //bulb3.rotation.z+=0.5;
-scene.add(bulb3);
+scene.add(bulb3);*/
 
 //GREEN SPOTLIGHT
 //let geometryC4 = new THREE.BoxGeometry(5,5,7.5);
-let geometryC4 = new THREE.SphereGeometry(3, 32, 32);
+/*let geometryC4 = new THREE.SphereGeometry(3, 32, 32);
 let materialC4 = new THREE.MeshLambertMaterial({ color: 0x00FF00 });
 let bulb4 = new THREE.Mesh(geometryC4, materialC4);
 bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);
 //bulb4.rotation.z-=0.5;
-scene.add(bulb4);
+scene.add(bulb4);*/
 
 function posFigure(figure, posX, posY, rotX, rotY) {
     figure.position.x = posX;
@@ -623,16 +589,16 @@ let lightSwitch = document.getElementById('lights');
 lightSwitch.addEventListener('click', lightControl);
 
 function lightControl() {
-    if (spotlight1.intensity > 0 && spotlight2.intensity > 0 && spotlight3.intensity > 0 && spotlight4.intensity > 0) {
+    if (spotlight1.intensity > 0 /*&& spotlight2.intensity > 0 && spotlight3.intensity > 0 && spotlight4.intensity > 0*/) {
         spotlight1.intensity = 0;
-        spotlight2.intensity = 0;
-        spotlight3.intensity = 0;
-        spotlight4.intensity = 0;
+        //spotlight2.intensity = 0;
+        //spotlight3.intensity = 0;
+        //spotlight4.intensity = 0;
     } else {
-        spotlight1.intensity = 0.3;
-        spotlight2.intensity = 0.3;
-        spotlight3.intensity = 0.3;
-        spotlight4.intensity = 0.3;
+        spotlight1.intensity = 1;
+        //spotlight2.intensity = 1;
+        //spotlight3.intensity = 1;
+        //spotlight4.intensity = 1;
     }
 }
 
@@ -643,47 +609,18 @@ function rotateLights() {
     spotlight1.position.z = Math.sin(time) * 100;
     bulb1.position.set(spotlight1.position.x, spotlight1.position.y, spotlight1.position.z);
 
-    spotlight2.position.x = Math.cos(time) * 100;
+    /*spotlight2.position.x = Math.cos(time) * 100;
     spotlight2.position.z = -1 * Math.sin(time) * 100;
-    bulb2.position.set(spotlight2.position.x, spotlight2.position.y, spotlight2.position.z);
+    bulb2.position.set(spotlight2.position.x, spotlight2.position.y, spotlight2.position.z);*/
 
-    spotlight3.position.x = -1 * Math.sin(time) * 100;
+    /*spotlight3.position.x = -1 * Math.sin(time) * 100;
     spotlight3.position.z = -1 * Math.cos(time) * 100;
-    bulb3.position.set(spotlight3.position.x, spotlight3.position.y, spotlight3.position.z);
+    bulb3.position.set(spotlight3.position.x, spotlight3.position.y, spotlight3.position.z);*/
 
-    spotlight4.position.x = Math.sin(time) * 100;
+    /*spotlight4.position.x = Math.sin(time) * 100;
     spotlight4.position.z = Math.cos(time) * 100;
-    bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);
+    bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);*/
 }
-
-/*
-// obj - your object (THREE.Object3D or derived)
-// point - the point of rotation (THREE.Vector3)
-// axis - the axis of rotation (normalized THREE.Vector3)
-// theta - radian value of rotation
-// pointIsWorld - boolean indicating the point is in world coordinates (default = false)
-function rotateAboutPoint(obj, point, axis, theta, pointIsWorld){
-    pointIsWorld = (pointIsWorld === undefined)? false : pointIsWorld;
-
-    if(pointIsWorld){
-        obj.parent.localToWorld(obj.position); // compensate for world coordinate
-    }
-
-    obj.position.sub(point); // remove the offset
-    obj.position.applyAxisAngle(axis, theta); // rotate the POSITION
-    obj.position.add(point); // re-add the offset
-
-    if(pointIsWorld){
-        obj.parent.worldToLocal(obj.position); // undo world coordinates compensation
-    }
-
-    obj.rotateOnAxis(axis, theta); // rotate the OBJECT
-}
-*/
-
-var vec = new THREE.Vector3(-19.75, 99, 0);
-var vec2 = new THREE.Vector3(-19.5, 95, 0);
-
 
 /**light switch
  *
@@ -750,10 +687,21 @@ let picking = function () {
         INTERSECTED = null;
     }
 }
-
 /**
  * END OF RAYCASTER
  */
+
+
+/**GUI*/
+window.onload = function () {
+    //var text = new FizzyText();
+    var gui = new dat.GUI();
+    gui.add('message');
+    gui.add('speed', -5, 5);
+    gui.add('displayOutline');
+    gui.add('explode');
+};
+
 
 //draw scene
 let render = function () {
@@ -764,9 +712,7 @@ let render = function () {
 
 //updates the scene before render
 let update = function () {
-
     controls.update();
-
     picking();
     rotateLights();
 }
