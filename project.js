@@ -611,8 +611,6 @@ function posFigure(figure, posX, posY, rotX, rotY) {
  *
  * @type {HTMLElement}
  */
-let lightSwitch = document.getElementById('lights');
-lightSwitch.addEventListener('click', lightControl);
 
 function lightControl() {
     if (spotlight1.intensity > 0 /*&& spotlight2.intensity > 0 && spotlight3.intensity > 0 && spotlight4.intensity > 0*/) {
@@ -648,12 +646,7 @@ function rotateLights() {
     bulb4.position.set(spotlight4.position.x, spotlight4.position.y, spotlight4.position.z);*/
 }
 
-/**light switch
- *
- * @type {HTMLElement}
- */
-let closeSwitchR = document.getElementById('Open/Close R');
-closeSwitchR.addEventListener('click', closeControlR);
+
 
 function closeControlR() {
     if (!(rightDoor.position.z == -21.5)) {
@@ -667,12 +660,6 @@ function closeControlR() {
     }
 }
 
-/**light switch
- *
- * @type {HTMLElement}
- */
-let closeSwitchL = document.getElementById('Open/Close L');
-closeSwitchL.addEventListener('click', closeControlL);
 
 function closeControlL() {
     if (!(leftDoor.position.z == 17.25)) {
@@ -731,6 +718,9 @@ function displayGUI() {
         this.yPos = 0;
         this.zPos = 0;
         this.addModule = function () { addBaseModule(self.xPos, self.yPos, self.zPos); };
+        this.lightSwitch = function() {lightControl()};
+        this.openCloseL = function(){ closeControlL()};
+        this.openCloseR = function(){ closeControlR()};
     };
 
     var sceneEditor = new SceneEditor();
@@ -741,6 +731,15 @@ function displayGUI() {
     addModuleFolder.add(sceneEditor, 'yPos', 0, 200).name("Y");
     addModuleFolder.add(sceneEditor, 'zPos', -500, 500).name("Z");
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
+
+    /** Doors */
+    var doorsFolder = gui.addFolder('Doors');
+    doorsFolder.add(sceneEditor, 'openCloseL').name("Open/Close Left");
+    doorsFolder.add(sceneEditor, 'openCloseR').name('Open/Close Right');
+
+    /** Lights */
+    var lightFolder = gui.addFolder('Lights');
+    lightFolder.add(sceneEditor, 'lightSwitch').name("Light Switch");
 }
 
 //draw scene
