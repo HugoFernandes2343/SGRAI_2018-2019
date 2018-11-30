@@ -4,14 +4,17 @@ let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHei
 let selectableObjects = [];
 let predefinedDimensions = [];
 
+let pickingMode = false;
+
 let renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
-
+/*rAYCASTER VARIABLES*/
 var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector3(), INTERSECTED;
 
 //update viewport on resize
 window.addEventListener('resize', function () {
@@ -673,14 +676,30 @@ function closeControlL() {
     }
 }
 
-var mouse = new THREE.Vector3(), INTERSECTED;
+function togglePickMode(){
+    if (pickingMode === false) {
+        pickingMode = true;
+        alert('Picking On');
+    }else {
+        pickingMode = false;
+        alert('Picking Off');
+    }
+}
 
+//mouse over pick
 window.addEventListener('mousemove', onMouseMove, false);
-
 function onMouseMove(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+}
+
+//mouse onClick pick
+window.addEventListener('click', onMouseClickPick, false);
+function onMouseClickPick(event) {
+    event.preventDefault();
+    this.pickingMode = false;
+    //INTERSECTED ETC
 }
 
 let picking = function () {
@@ -690,11 +709,11 @@ let picking = function () {
     var intersects = raycaster.intersectObjects(selectableObjects, true);
 
     if (intersects.length > 0) {
-        if (INTERSECTED != intersects[0].object) {
+        if (INTERSECTED !== intersects[0].object) {
             if (INTERSECTED) INTERSECTED.parent.traverse(function (node) { if (node instanceof THREE.Mesh) { node.material.emissive.setHex(INTERSECTED.currentHex);} });
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-            if(INTERSECTED.parent != null){
+            if(INTERSECTED.parent != null || INTERSECTED.parent !== undefined){
                 INTERSECTED.parent.traverse(function (node) { if (node instanceof THREE.Mesh) { node.material.emissive.setHex(0xff0000);} });
             }
         }
@@ -721,7 +740,8 @@ function displayGUI() {
         this.lightSwitch = function() {lightControl()};
         this.openCloseL = function(){ closeControlL()};
         this.openCloseR = function(){ closeControlR()};
-    };
+        this.togglePick = function () {togglePickMode()};
+    }
 
     var sceneEditor = new SceneEditor();
 
@@ -740,6 +760,11 @@ function displayGUI() {
     /** Lights */
     var lightFolder = gui.addFolder('Lights');
     lightFolder.add(sceneEditor, 'lightSwitch').name("Light Switch");
+
+    /** Toggle Picking Mode*/
+    var pickingFolder = gui.addFolder('Picking');
+    pickingFolder.add(sceneEditor, 'togglePick').name('Toggle Picking');
+
 }
 
 //draw scene
@@ -752,7 +777,9 @@ let render = function () {
 //updates the scene before render
 let update = function () {
     controls.update();
-    picking();
+    if(pickingMode == true){
+        picking();
+    }
     rotateLights();
 }
 
