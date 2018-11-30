@@ -2,6 +2,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 100000);
 
 let selectableObjects = [];
+let predefinedDimensions = [];
 
 let renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -38,6 +39,14 @@ controls = new THREE.OrbitControls(camera, renderer.domElement);
 //controls.minDistance = 50; //Cannot enter inside object
 //controls.maxDistance = 420; // Cannot get out of the house
 
+/**
+ * Add Shadows (Casting and Recieving) //avoid for for the scene obj
+ * @param object object to add shadows
+ */
+function addShadowCastingAndReciever(object){
+    object.traverse(function (node) { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; } });
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////// MODEL OF THE ROOM AND COMPONENTS //////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -69,59 +78,87 @@ loader.load(
 
 );
 
-//shape
-
-//credits
-/*
-let geometryCredits1 = new THREE.BoxGeometry(50, 50, 0.5);
-let geometryCredits2 = new THREE.BoxGeometry(50, 50, 0.5);
-let geometryCredits3 = new THREE.BoxGeometry(50, 50, 0.5);
-let geometryCredits4 = new THREE.BoxGeometry(50, 50, 0.5);
-
-//textures & colorss
-let creditMaterial1 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('imgs/HugoF.jpg'), side: THREE.SingleSide });
-let creditMaterial2 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('imgs/Marco.jpg'), side: THREE.SingleSide });
-let creditMaterial3 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('imgs/Berto.jpg'), side: THREE.SingleSide });
-let creditMaterial4 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load('imgs/HugoC.jpg'), side: THREE.SingleSide });
-
-let credits1 = new THREE.Mesh(geometryCredits1, creditMaterial1);
-credits1.position.y = 26;
-credits1.position.z = -580;
-credits1.position.x = -30;
-
-
-let credits2 = new THREE.Mesh(geometryCredits2, creditMaterial2);
-credits2.position.y = 26;
-credits2.position.z = -580;
-credits2.position.x = 30;
-
-
-let credits3 = new THREE.Mesh(geometryCredits3, creditMaterial3);
-credits3.position.y = 26;
-credits3.position.z = -580;
-credits3.position.x = -90;
-
-
-let credits4 = new THREE.Mesh(geometryCredits4, creditMaterial4);
-credits4.position.y = 26;
-credits4.position.z = -580;
-credits4.position.x = 90;
-
-
-scene.add(credits1);
-scene.add(credits2);
-scene.add(credits3);
-scene.add(credits4);
-*/
-
 camera.position.z = 100;
 camera.position.y = 150;
 camera.position.x = 0;
 camera.rotation.x -= 0.3;
 
 
-//Movel 1
+//Add a base module
+function addBaseModule(x, y, z) {
 
+    let baseModule = new THREE.Object3D();
+
+    //Floor
+    let floorGeometry = new THREE.CubeGeometry(77.5, 5, 35);
+    let floorMaterial = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    let floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.position.y = 1.5;
+
+    //Ceiling
+    let ceilingGeometry = new THREE.CubeGeometry(77.5, 2.5, 35);
+    let ceilingMaterial = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    let ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
+    ceiling.position.y = 199.75;
+
+    //Left Wall
+    let leftWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
+    let leftWallMaterial = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    let leftWall = new THREE.Mesh(leftWallGeometry, leftWallMaterial);
+    leftWall.position.x = 40;
+    leftWall.position.y = 100;
+
+    //Right Wall
+    let rightWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
+    let rightWallMaterial = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    let rightWall = new THREE.Mesh(rightWallGeometry, rightWallMaterial);
+    rightWall.position.x = -40;
+    rightWall.position.y = 100;
+
+    //Back Wall
+    let backWallGeometry = new THREE.CubeGeometry(77.5, 200, 2);
+    let backWallMaterial = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    let backWall = new THREE.Mesh(backWallGeometry, backWallMaterial);
+    backWall.position.z = -15;
+    backWall.position.y = 100;
+
+    baseModule.add(backWall,
+        rightWall, leftWall, ceiling, floor);
+
+    baseModule.position.x = x;
+    baseModule.position.y = y;
+    baseModule.position.z = z;
+
+    selectableObjects.push(backWall,
+        rightWall, leftWall, ceiling, floor);
+
+    baseModule.traverse(function (node) { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; } });
+
+    scene.add(baseModule);
+
+}
+
+//Movel 1
 //Floor
 let floorGeometry = new THREE.CubeGeometry(77.5, 5, 35);
 let floorMaterial = new THREE.MeshLambertMaterial({
@@ -442,8 +479,14 @@ scene.add(door2D);
 
 //door knobs
 
-
-
+//Cabinet "Casket"
+let cabinet = new THREE.Object3D();
+cabinet.add(door2D,
+    glassStripL, woodStripL3,
+    woodStripL2, woodStripL1, shelfGlass,
+    shelf4, shelf3, shelf2, shelf1, backWall,
+    rightWall, leftWall, ceiling, floor);
+scene.add(cabinet);
 
 //Group door right
 var rightDoor = new THREE.Object3D();
@@ -463,28 +506,14 @@ leftDoor.add(glassStripL);
 leftDoor.add(door2D);
 scene.add(leftDoor);
 
+addShadowCastingAndReciever(cabinet);
+addShadowCastingAndReciever(rightDoor);
+addShadowCastingAndReciever(leftDoor);
+
 //add objects to the raycast selection range
-selectableObjects.push(rightDoor, door1D, door2D,
-    glassStripL, glassStripR, woodStripL3,
-    woodStripL2, woodStripL1, woodStripR3,
-    woodStripR2, woodStripR1, shelfGlass,
-    shelf4, shelf3, shelf2, shelf1, backWall,
-    rightWall, leftWall, ceiling, floor);
+selectableObjects.push(rightDoor, leftDoor, cabinet);
 
-//Cabinet full object
-let cabinetGroup = new THREE.Group();
-let cabinet = new THREE.Object3D();
 
-cabinetGroup.add(rightDoor, door1D, door2D,
-    glassStripL, glassStripR, woodStripL3,
-    woodStripL2, woodStripL1, woodStripR3,
-    woodStripR2, woodStripR1, shelfGlass,
-    shelf4, shelf3, shelf2, shelf1, backWall,
-    rightWall, leftWall, ceiling, floor);
-
-cabinet.add(cabinetGroup);
-cabinet.traverse(function (node) { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; } });
-scene.add(cabinet);
 
 //Lights
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
@@ -493,12 +522,9 @@ scene.add(ambientLight);
 let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 //scene.add(light1);
 
-//let directionalLight = new THREE.DirectionalLight(0x6BFA6B, 4, 50);
-//scene.add(directionalLight);
-
 //RED SPOTLIGHT
 let spotlight1 = new THREE.SpotLight(0xFFFFFF, 1);
-spotlight1.position.set(0, 250, 250);
+spotlight1.position.set(0, 450, 350);
 spotlight1.lookAt(0, 0, 0);
 spotlight1.castShadow = true;
 spotlight1.shadowCameraVisible = true;
@@ -630,14 +656,14 @@ let closeSwitchR = document.getElementById('Open/Close R');
 closeSwitchR.addEventListener('click', closeControlR);
 
 function closeControlR() {
-    if(!(rightDoor.position.z == -21.5)){
+    if (!(rightDoor.position.z == -21.5)) {
         rightDoor.position.z -= 21.5;
         rightDoor.position.x -= 57;
-        rightDoor.rotation.y = Math.PI/2;}
-        else{
+        rightDoor.rotation.y = Math.PI / 2;
+    } else {
         rightDoor.position.z += 21.5;
         rightDoor.position.x += 57;
-        rightDoor.rotation.y -= Math.PI/2;
+        rightDoor.rotation.y -= Math.PI / 2;
     }
 }
 
@@ -649,16 +675,17 @@ let closeSwitchL = document.getElementById('Open/Close L');
 closeSwitchL.addEventListener('click', closeControlL);
 
 function closeControlL() {
-    if(!(leftDoor.position.z == 17.25)){
+    if (!(leftDoor.position.z == 17.25)) {
         leftDoor.position.z = 17.25;
         leftDoor.position.x = 58.5;
-        leftDoor.rotation.y = -Math.PI/2;}
-    else{
+        leftDoor.rotation.y = -Math.PI / 2;
+    } else {
         leftDoor.position.z -= 17.25;
         leftDoor.position.x -= 58.5;
-        leftDoor.rotation.y += Math.PI/2;
+        leftDoor.rotation.y += Math.PI / 2;
     }
 }
+
 var mouse = new THREE.Vector3(), INTERSECTED;
 
 window.addEventListener('mousemove', onMouseMove, false);
@@ -673,35 +700,48 @@ let picking = function () {
     // find intersections
     raycaster.setFromCamera(mouse, camera);
     //var intersects = raycaster.intersectObjects(scene.children, true);
-    var intersects = raycaster.intersectObjects(selectableObjects,false);
+    var intersects = raycaster.intersectObjects(selectableObjects, true);
 
     if (intersects.length > 0) {
         if (INTERSECTED != intersects[0].object) {
-            if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+            if (INTERSECTED) INTERSECTED.parent.traverse(function (node) { if (node instanceof THREE.Mesh) { node.material.emissive.setHex(INTERSECTED.currentHex);} });
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-            INTERSECTED.material.emissive.setHex(0xff0000);
+            if(INTERSECTED.parent != null){
+                INTERSECTED.parent.traverse(function (node) { if (node instanceof THREE.Mesh) { node.material.emissive.setHex(0xff0000);} });
+            }
         }
     } else {
-        if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+        if (INTERSECTED) INTERSECTED.parent.traverse(function (node) { if (node instanceof THREE.Mesh) { node.material.emissive.setHex(INTERSECTED.currentHex);} });
         INTERSECTED = null;
     }
 }
-/**
- * END OF RAYCASTER
- */
-
 
 /**GUI*/
 window.onload = function () {
-    //var text = new FizzyText();
-    var gui = new dat.GUI();
-    gui.add('message');
-    gui.add('speed', -5, 5);
-    gui.add('displayOutline');
-    gui.add('explode');
+    displayGUI();
 };
 
+function displayGUI() {
+    var gui = new dat.GUI();
+
+    function SceneEditor() {
+        self = this;
+        this.xPos = 0;
+        this.yPos = 0;
+        this.zPos = 0;
+        this.addModule = function () { addBaseModule(self.xPos, self.yPos, self.zPos); };
+    };
+
+    var sceneEditor = new SceneEditor();
+
+    /**Basic Module Add */
+    var addModuleFolder = gui.addFolder('Add Base Module');
+    addModuleFolder.add(sceneEditor, 'xPos', -500, 500).name("X");
+    addModuleFolder.add(sceneEditor, 'yPos', 0, 200).name("Y");
+    addModuleFolder.add(sceneEditor, 'zPos', -500, 500).name("Z");
+    addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
+}
 
 //draw scene
 let render = function () {
