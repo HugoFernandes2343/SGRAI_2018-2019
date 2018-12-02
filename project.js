@@ -1,5 +1,41 @@
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 100000);
+/*var views = [
+    {
+        left: 0.5,
+        top: 0.5,
+        width: 0.25,
+        height: 0.5,
+       // background: new THREE.Color( 0.7, 0.5, 0.5 ),
+        eye: [ 0, 1800, 0 ],
+        up: [ 0, 0, 1 ],
+        fov: 45,
+        updateCamera: function ( camera, scene, mouseX ) {
+
+            camera.position.x -= mouseX * 0.05;
+            camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
+            camera.lookAt( camera.position.clone().setY( 0 ) );
+
+        }
+    },
+    {
+        left: 0,
+        top: 0,
+        width: 1,
+        height: 1,
+        //background: new THREE.Color( 0.5, 0.7, 0.7 ),
+        eye: [ 1400, 800, 1400 ],
+        up: [ 0, 1, 0 ],
+        fov: 60,
+        updateCamera: function ( camera, scene, mouseX ) {
+
+            camera.position.y -= mouseX * 0.05;
+            camera.position.y = Math.max( Math.min( camera.position.y, 1600 ), - 1600 );
+            camera.lookAt( scene.position );
+
+        }
+    }
+];**/
 
 let selectableObjects = [];
 let predefinedDimensions = [];
@@ -847,6 +883,14 @@ let update = function () {
 
 //runs the program
 let loop = function () {
+    /*for ( var ii=0;ii<views.length;++ii){
+        var view = views[ ii ];
+        let camera = new THREE.PerspectiveCamera(view.fov, window.innerWidth / window.innerHeight, 0.01, 100000);
+        camera.position.fromArray(view.eye);
+        camera.up.fromArray(view.up);
+        view.camera = camera;
+    }**/
+
     requestAnimationFrame(loop);
     update();
     render();
