@@ -1,3 +1,7 @@
+if ( WEBGL.isWebGLAvailable() === false ) {
+    document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+}
+
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 100000);
 /*var views = [
@@ -41,9 +45,11 @@ let selectableObjects = [];
 let predefinedDimensions = [];
 let selectableTextures = [];
 let currentlyPickedObject = new THREE.Object3D();
+let moduleTypes = ["baseModuleType","doorModuleType","storageModuleType","shelfModuleType"];
 
-
+var gui = new dat.GUI();
 let pickingMode = false;
+let editing = false;
 
 let renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -54,7 +60,7 @@ renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
 /*rAYCASTER VARIABLES*/
 var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector3(), INTERSECTED;
+var mouse = new THREE.Vector3(), INTERSECTED = null;
 
 //update viewport on resize
 window.addEventListener('resize', function () {
@@ -123,6 +129,7 @@ camera.position.x = 0;
 function addBaseModule(xbase, zbase, x, y, z, texture) {
    
     let baseModule = new THREE.Object3D();
+    baseModule.name = moduleTypes[0];
     let choosenMaterial;
     if (texture == -1) {
         return
@@ -218,7 +225,7 @@ function addBaseModule(xbase, zbase, x, y, z, texture) {
         rightWall, leftWall, ceiling, floor);
 
     baseModule.traverse(function (node) { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; } });
-
+    baseModule.name = moduleTypes[0];
     scene.add(baseModule);
 
 }
@@ -585,7 +592,7 @@ drawer.add(drawerRight);
 drawer.add(drawerLeft);
 drawer.add(drawerFront);
 drawer.add(drawerBack);
-
+drawer.name = moduleTypes[2];
 scene.add(drawer);
 
 //Group door right
@@ -611,6 +618,7 @@ let cabinet = new THREE.Object3D();
 cabinet.add(shelfGlass,
     shelf4, shelf3, shelf2, shelf1, backWall,
     rightWall, leftWall, ceiling, floor);
+cabinet.name = moduleTypes[0];
 scene.add(cabinet);
 
 addShadowCastingAndReciever(cabinet);
@@ -618,7 +626,7 @@ addShadowCastingAndReciever(rightDoor);
 addShadowCastingAndReciever(leftDoor);
 
 //add objects to the raycast selection range
-selectableObjects.push(rightDoor, leftDoor, cabinet);
+selectableObjects.push(rightDoor, leftDoor, cabinet,drawer);
 
 //Lights
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
@@ -821,31 +829,25 @@ function togglePickMode(){
     }
 }
 
+function addAdvModule(){
+
+    if(INTERSECTED == null || INTERSECTED === undefined || 
+        INTERSECTED.parent == null || INTERSECTED.parent === undefined){
+        alert("No Model/Module was picked!");
+    }
+
+    //add a switch case maybe??
+    //baseado no modelo, adicionar dentro do modelo pai (INTERSECTED.parent)
+    //variaveis necessarias devem ja estar globais
+
+}
+
 //mouse over pick
 window.addEventListener('mousemove', onMouseMove, false);
 function onMouseMove(event) {
     event.preventDefault();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-}
-
-//mouse onClick pick
-window.addEventListener('dblclick', onMouseClickPick, false);
-function onMouseClickPick(event) {
-    event.preventDefault();
-    if(pickingMode === true){
-        pickingMode = false;
-        if(INTERSECTED.parent != null && INTERSECTED.parent !== undefined){
-            currentlyPickedObject = INTERSECTED.parent;
-            alert("Selected "+INTERSECTED.parent.name+".");//TESTING PURPOSES
-        }
-
-        //INTERSECTED ETC
-    }else{
-        //Do Nothing and keep executing normal functions
-    }
-
-
 }
 
 let picking = function () {
@@ -874,31 +876,44 @@ window.onload = function () {
     displayGUI();
 };
 
+function SceneEditor() {
+    self = this;
+    this.xBasePos = 0;
+    this.zBasePos = 0;
+    this.xPos = 0;
+    this.yPos = 0;
+    this.zPos = 0;
+    this.material = -1;
+    this.chosenAdvModule=-1;//tipo de module interno
+    this.X = 0;
+    this.Y = 0;
+    this.Z = 0;
+    this.presets = -1;
+    this.cameraMove = function () { moveCamera(self.X,self.Y,self.Z)};
+    this.cameraMovePreset = function () { moveCameraPreset(self.presets)};
+    this.addModule = function () { addBaseModule(self.xBasePos, self.zBasePos, self.xPos, self.yPos, self.zPos, self.material); };
+    this.lightSwitch = function() { lightControl()};
+    this.openCloseL = function(){ closeControlL()};
+    this.openCloseR = function() { closeControlR()};
+    this.togglePick = function () { togglePickMode()};
+    this.addAdvancedModule = function(){ addAdvModule()};
+}
+
+var sceneEditor = new SceneEditor();
+
 function displayGUI() {
-    var gui = new dat.GUI();
+    /** Lights */
+    var lightFolder = gui.addFolder('Lights');
+    lightFolder.add(sceneEditor, 'lightSwitch').name("Light Switch");
 
-    function SceneEditor() {
-        self = this;
-        this.xBasePos = 0;
-        this.zBasePos = 0;
-        this.xPos = 0;
-        this.yPos = 0;
-        this.zPos = 0;
-        this.material = -1;
-        this.X = 0;
-        this.Y = 0;
-        this.Z = 0;
-        this.presets = -1;
-        this.cameraMove = function () { moveCamera(self.X,self.Y,self.Z)};
-        this.cameraMovePreset = function () { moveCameraPreset(self.presets)};
-        this.addModule = function () { addBaseModule(self.xBasePos, self.zBasePos, self.xPos, self.yPos, self.zPos, self.material); };
-        this.lightSwitch = function() {lightControl()};
-        this.openCloseL = function(){ closeControlL()};
-        this.openCloseR = function(){ closeControlR()};
-        this.togglePick = function () {togglePickMode()};
-    }
+    /** Toggle Picking Mode*/
+     var pickingFolder = gui.addFolder('Picking');
+    pickingFolder.add(sceneEditor, 'togglePick').name('Toggle Picking');
 
-    var sceneEditor = new SceneEditor();
+    /** Doors */
+    var doorsFolder = gui.addFolder('Doors');
+    doorsFolder.add(sceneEditor, 'openCloseL').name("Open/Close Left");
+    doorsFolder.add(sceneEditor, 'openCloseR').name('Open/Close Right');
 
     var cameraFolder = gui.addFolder('Camera');
 
@@ -923,21 +938,26 @@ function displayGUI() {
     addModuleFolder.add(sceneEditor, 'zPos', 0, 250).name("Depth");
     addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
-    
 
-    /** Doors */
-    var doorsFolder = gui.addFolder('Doors');
-    doorsFolder.add(sceneEditor, 'openCloseL').name("Open/Close Left");
-    doorsFolder.add(sceneEditor, 'openCloseR').name('Open/Close Right');
+    let baseModuleFolder = gui.addFolder('Base Module Config');
+    //add the comboBox here
+    baseModuleFolder.add(sceneEditor,'addAdvancedModule').name('Add Selected Module');
+}
 
-    /** Lights */
-    var lightFolder = gui.addFolder('Lights');
-    lightFolder.add(sceneEditor, 'lightSwitch').name("Light Switch");
-
-    /** Toggle Picking Mode*/
-    var pickingFolder = gui.addFolder('Picking');
-    pickingFolder.add(sceneEditor, 'togglePick').name('Toggle Picking');
-
+//mouse onClick pick
+window.addEventListener('dblclick', onMouseClickPick, false);
+function onMouseClickPick(event) {
+    event.preventDefault();
+    if(pickingMode === true){
+        pickingMode = false;
+        if(INTERSECTED.parent != null && INTERSECTED.parent !== undefined){
+            currentlyPickedObject = INTERSECTED.parent;
+        }
+        //INTERSECTED ETC
+    }else{
+        //Do Nothing and keep executing normal functions
+        currentlyPickedObject = null;
+    }
 }
 
 //draw scene
