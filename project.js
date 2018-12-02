@@ -78,9 +78,9 @@ scene.add(skyGlobe);
 
 //controls
 controls = new THREE.OrbitControls(camera, renderer.domElement);
-//controls.maxPolarAngle = 0.9 * Math.PI / 2; //impedir que a camera além do chao
-//controls.minDistance = 50; //Cannot enter inside object
-//controls.maxDistance = 420; // Cannot get out of the house
+controls.maxPolarAngle = 0.9 * Math.PI / 2; //impedir que a camera além do chao
+controls.minDistance = 50; //Cannot enter inside object
+controls.maxDistance = 420; // Cannot get out of the house
 
 /**
  * Add Shadows (Casting and Recieving) //avoid for for the scene obj
@@ -110,21 +110,13 @@ loader.load(
 
         scene.add(gltf.scene);
         gltf.scene.translateY(-1);
-        //  glft.scene.position.y = -2;
-        // gltf.animations; // Array<THREE.AnimationClip>
-        // gltf.scene; // THREE.Scene
-        // gltf.scenes; // Array<THREE.Scene>
-        // gltf.cameras; // Array<THREE.Camera>
-        // gltf.asset; // Object
-
     },
 
 );
 
-camera.position.z = 100;
-camera.position.y = 150;
+camera.position.z = 325;
+camera.position.y = 250;
 camera.position.x = 0;
-camera.rotation.x -= 0.3;
 
 
 //Add a base module
@@ -623,45 +615,6 @@ addShadowCastingAndReciever(leftDoor);
 //add objects to the raycast selection range
 selectableObjects.push(rightDoor, leftDoor, cabinet);
 
-
-/**
-// Sphere Geometry 1
-pivotRightGeometry1 = new THREE.BoxGeometry(1.5, 3, 0);
-
-// Sphere Material 1
-pivotRightMaterial1 = new THREE.MeshLambertMaterial({
-    color: 0xfccdd3
-});
-
-// Sphere Mesh 1
-pivotRightMesh1 = new THREE.Mesh(pivotRightGeometry1, pivotRightMaterial1);
-pivotRightMesh1.receiveShadow = true;
-pivotRightMesh1.position.set((-19.5*2),0,18.5);
-scene.add(pivotRightMesh1);
-
-// Pivot point
-pivotPoint = new THREE.Object3D();
-pivotRightMesh1.add(pivotPoint);
-
-// Sphere Geometry 2
-sphereGeometry2 = new THREE.SphereBufferGeometry(30, 20, 20);
-
-// Sphere Material 2
-sphereMaterial2 = new THREE.MeshLambertMaterial({
-    color: 0x6ed3cf
-});
-
-// Sphere Mesh 2
-sphereMesh2 = new THREE.Mesh(sphereGeometry2, sphereMaterial2);
-
-// Position from pivot point to sphere 2
-sphereMesh2.position.set(260,100, 300);
-
-// make the pivotpoint the sphere's parent.
-pivotPoint.add(rightDoor);
-
-*/
-
 //Lights
 let ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
 scene.add(ambientLight);
@@ -797,20 +750,11 @@ function rotateLights() {
 
 function closeControlR() {
     if (!(rightDoor.position.z == 17.25)) {
-       // rightDoor.position.set(rightDoor.position.x - 58.5,rightDoor.position.y,rightDoor.position.z +17.25 );
         rightDoor.position.z += 17.25;
         rightDoor.position.x -= 58.5;
         rightDoor.rotateSpeed = 0.000001;
         rightDoor.rotation.y += Math.PI / 2;
 
-          //  pivotPoint.rotateSpeed =0.005;
-            //pivotPoint.rotation.y = -Math.PI/2;
-
-
-
-
-      //  rightDoor.translateY(0.5);
-       // pivotPoint.autoUpdate();
     } else {
         rightDoor.position.z -= 17.25;
         rightDoor.position.x += 58.5;
@@ -833,6 +777,33 @@ function closeControlL() {
         leftDoor.rotateSpeed = 0.000001;
         leftDoor.rotation.y += Math.PI / 2;
     }
+}
+
+function moveCamera (x,y,z) {
+    camera.position.x = x;
+    camera.position.y =y;
+    camera.position.z=z;
+}
+
+function moveCameraPreset (preset) {
+   if(preset==0){
+            camera.position.z = 325;
+            camera.position.y = 250;
+            camera.position.x = 0;
+        } else if(preset==1){
+            camera.position.z = -325;
+            camera.position.y = 250;
+            camera.position.x = 0;
+        }else if(preset==2){
+            camera.position.z = 0;
+            camera.position.y = 250;
+            camera.position.x = 325;
+        }else if(preset==3){
+            camera.position.z = 0;
+            camera.position.y = 250;
+            camera.position.x = -325;
+        }
+
 }
 
 function togglePickMode(){
@@ -909,6 +880,12 @@ function displayGUI() {
         this.yPos = 0;
         this.zPos = 0;
         this.material = -1;
+        this.X = 0;
+        this.Y = 0;
+        this.Z = 0;
+        this.presets = -1;
+        this.cameraMove = function () { moveCamera(self.X,self.Y,self.Z)};
+        this.cameraMovePreset = function () { moveCameraPreset(self.presets)};
         this.addModule = function () { addBaseModule(self.xBasePos, self.zBasePos, self.xPos, self.yPos, self.zPos, self.material); };
         this.lightSwitch = function() {lightControl()};
         this.openCloseL = function(){ closeControlL()};
@@ -918,13 +895,27 @@ function displayGUI() {
 
     var sceneEditor = new SceneEditor();
 
+    var cameraFolder = gui.addFolder('Camera');
+
+    var manualChangesFolder = cameraFolder.addFolder('Manual');
+    manualChangesFolder.add(sceneEditor,'X',-500,500).name("X");
+    manualChangesFolder.add(sceneEditor,'Y',0,390).name("Y");
+    manualChangesFolder.add(sceneEditor,'Z',-500,500).name("Z");
+    manualChangesFolder.add(sceneEditor,'cameraMove').name('Change Camera Position');
+
+    var presetCameraPositionsFolder = cameraFolder.addFolder('Preset');
+    presetCameraPositionsFolder.add(sceneEditor, 'presets', { Choose: -1, Default: 0, Back: 1, Right: 2, Left: 3}).name("Presets");
+    presetCameraPositionsFolder.add(sceneEditor, 'cameraMovePreset').name('Change Camera Position');
+
+
+
     /**Basic Module Add */
     var addModuleFolder = gui.addFolder('Add Base Module');
-    addModuleFolder.add(sceneEditor, 'xBasePos', -500, 500).name("XBASE");
-    addModuleFolder.add(sceneEditor, 'zBasePos', -500, 500).name("ZBASE");
-    addModuleFolder.add(sceneEditor, 'xPos', 0, 350).name("Width");
-    addModuleFolder.add(sceneEditor, 'yPos', 0, 350).name("Heigth");
-    addModuleFolder.add(sceneEditor, 'zPos', 0, 350).name("Depth");
+    addModuleFolder.add(sceneEditor, 'xBasePos', -300, 300).name("XBASE");
+    addModuleFolder.add(sceneEditor, 'zBasePos', -300, 200).name("ZBASE");
+    addModuleFolder.add(sceneEditor, 'xPos', 0, 250).name("Width");
+    addModuleFolder.add(sceneEditor, 'yPos', 0, 300).name("Heigth");
+    addModuleFolder.add(sceneEditor, 'zPos', 0, 250).name("Depth");
     addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
     
