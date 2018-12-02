@@ -577,7 +577,8 @@ drawer.add(drawerLeft);
 drawer.add(drawerFront);
 drawer.add(drawerBack);
 drawer.name = moduleTypes[2];
-scene.add(drawer);
+drawer2 = buildDrawer(100, 20, 150, 50, 0);
+//scene.add(drawer2);
 
 //Group door right
 var rightDoor = new THREE.Object3D();
@@ -884,14 +885,16 @@ function addAdvModule(y, module, texture){
     }
 
     if (module == 0) {
-        //should add the shelf here
-        return
+        newModule = buildDrawer(children[3].geometry.parameters.width, children[3].geometry.parameters.depth, choosenMaterial);
+        //newModule.position.x =
+        newModule.position.y = y;
+        //newModule.position.z =
     }
 
     if (module == 1) {
         let shelfGeometry = new THREE.CubeGeometry(children[3].geometry.parameters.width, 2.5, children[3].geometry.parameters.depth);
         newModule = new THREE.Mesh(shelfGeometry, choosenMaterial);
-        newModule.position.y = y;        
+        newModule.position.y = y;
     }
     if (module == 2) {
         var rodGeometry = new THREE.CylinderBufferGeometry(2.5, 2.5, children[3].geometry.parameters.width, 32);
@@ -904,6 +907,60 @@ function addAdvModule(y, module, texture){
     //baseado no modelo, adicionar dentro do modelo pai (INTERSECTED.parent)
     //variaveis necessarias devem ja estar globais
 
+}
+
+
+
+function buildDrawer(width, depth1, material){
+
+    let height = 12.5;
+    let thickness = 2;
+    let depth = depth1 -thickness;
+
+    let drawerBottomGeometry = new THREE.CubeGeometry(width, thickness, depth);
+    
+    let drawerSideGeometry = new THREE.CubeGeometry(height, thickness, depth-(thickness*2));
+    
+
+    let drawerFrontGeometry = new THREE.CubeGeometry(width, thickness, height);
+    
+
+    let drawerBottom = new THREE.Mesh(drawerBottomGeometry, material);
+
+
+    let drawerRight = new THREE.Mesh(drawerSideGeometry, material);
+    drawerRight.position.z = drawerBottom.position.z;
+    drawerRight.position.y = drawerBottom.position.y + height/2 + thickness/2;
+    drawerRight.rotation.z += Math.PI / 2;
+    drawerRight.position.x = drawerBottom.position.x + width/2 - thickness/2;
+
+    let drawerLeft = new THREE.Mesh(drawerSideGeometry, material);
+    drawerLeft.position.z = drawerBottom.position.z;
+    drawerLeft.position.y = drawerBottom.position.y + height/2 + thickness/2;
+    drawerLeft.rotation.z += Math.PI / 2;
+    drawerLeft.position.x = drawerBottom.position.x - (width/2 - thickness/2);
+
+    let drawerFront = new THREE.Mesh(drawerFrontGeometry, material);
+    drawerFront.position.z = drawerBottom.position.z + depth/2 - thickness/2;
+    drawerFront.position.y = drawerBottom.position.y + height/2 + thickness/2;
+    drawerFront.position.x = drawerBottom.position.x;
+    drawerFront.rotation.x += Math.PI / 2;
+
+    let drawerBack = new THREE.Mesh(drawerFrontGeometry, material);
+    drawerBack.position.z = drawerBottom.position.z - depth/2 + thickness/2;
+    drawerBack.position.y = drawerBottom.position.y + height/2 + thickness/2;
+    drawerBack.position.x = drawerBottom.position.x;
+    drawerBack.rotation.x += Math.PI / 2;
+
+    var drawer = new THREE.Object3D();
+    drawer.add(drawerBottom);
+    drawer.add(drawerRight);
+    drawer.add(drawerLeft);
+    drawer.add(drawerFront);
+    drawer.add(drawerBack);
+    drawer.name = moduleTypes[2];
+    drawer.position.z += thickness/2;
+    return drawer;
 }
 
 //mouse over pick
