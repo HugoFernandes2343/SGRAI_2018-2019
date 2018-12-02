@@ -523,22 +523,6 @@ scene.add(door2D);
 
 //door knobs
 
-/*//pole
-var geometry1234 = new THREE.CylinderBufferGeometry(2.5, 2.5, x, 32);
-    var material1234 = new THREE.MeshLambertMaterial({
-        map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
-        side: THREE.DoubleSide,
-        emissive: null
-    });
-    var cylinder = new THREE.Mesh(geometry1234, material1234);
-    cylinder.position.y = y - 10;
-    cylinder.rotation.z = Math.PI / 2;*/
-
-/*//estante
-let estanteGeometry = new THREE.CubeGeometry(x, 2.5, z);
-let estante = new THREE.Mesh(estanteGeometry, choosenMaterial);
-estante.position.y = y / 2;*/
-
 //drawer
 let drawerBottomGeometry = new THREE.CubeGeometry(77.5, 2, 31.5);
 let drawerBottomMaterial = new THREE.MeshLambertMaterial({
@@ -829,13 +813,93 @@ function togglePickMode(){
     }
 }
 
-function addAdvModule(){
+function addAdvModule(y, module, texture){
+
+    let newModule;
+    let children = currentlyPickedObject.children;
 
     if(INTERSECTED == null || INTERSECTED === undefined || 
         INTERSECTED.parent == null || INTERSECTED.parent === undefined){
         alert("No Model/Module was picked!");
     }
 
+    let choosenMaterial;
+    if (texture == -1) {
+        return
+    }
+    if (texture == 0) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 1) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 2) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 3) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 4) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 5) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            color: 0xA8CCD7,
+            refractionRatio: 0.5,
+            reflectivity: 0.99,
+            emissive: null
+        });
+        choosenMaterial.transparent = true;
+        choosenMaterial.opacity = 0.4;
+
+    }
+
+    if (module == -1) {
+        return
+    }
+
+    if (module == 0) {
+        //should add the shelf here
+        return
+    }
+
+    if (module == 1) {
+        let shelfGeometry = new THREE.CubeGeometry(children[3].geometry.parameters.width, 2.5, children[3].geometry.parameters.depth);
+        newModule = new THREE.Mesh(shelfGeometry, choosenMaterial);
+        newModule.position.y = y;        
+    }
+    if (module == 2) {
+        var rodGeometry = new THREE.CylinderBufferGeometry(2.5, 2.5, children[3].geometry.parameters.width, 32);
+        newModule = new THREE.Mesh(rodGeometry, choosenMaterial);
+        newModule.position.y = y;
+        newModule.rotation.z = Math.PI / 2;
+    }
+    currentlyPickedObject.add(newModule);
     //add a switch case maybe??
     //baseado no modelo, adicionar dentro do modelo pai (INTERSECTED.parent)
     //variaveis necessarias devem ja estar globais
@@ -895,8 +959,11 @@ function SceneEditor() {
     this.lightSwitch = function() { lightControl()};
     this.openCloseL = function(){ closeControlL()};
     this.openCloseR = function() { closeControlR()};
-    this.togglePick = function () { togglePickMode()};
-    this.addAdvancedModule = function(){ addAdvModule()};
+    this.togglePick = function () { togglePickMode() };
+    this.modules = -1;
+    this.materials = -1;
+    this.yMPos = 0;
+    this.addAdvancedModule = function () { addAdvModule(self.yMPos, self.modules, self.mmaterial) };
 }
 
 var sceneEditor = new SceneEditor();
@@ -941,6 +1008,9 @@ function displayGUI() {
 
     let baseModuleFolder = gui.addFolder('Base Module Config');
     //add the comboBox here
+    baseModuleFolder.add(sceneEditor, 'yMPos', 0, 300).name("Heigth");
+    baseModuleFolder.add(sceneEditor, 'modules', { Choose: -1, Drawer: 0, Shelf: 1, Rod: 2 });
+    baseModuleFolder.add(sceneEditor, 'materials', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     baseModuleFolder.add(sceneEditor,'addAdvancedModule').name('Add Selected Module');
 }
 
