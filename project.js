@@ -179,6 +179,22 @@ function addBaseModule(xbase, zbase, x, y, z, texture) {
 
 }
 
+//Add a base module
+function addPresetBaseModule(size,x,z) {
+
+    if(size==0){
+        addBaseModule(x,z,20,50,10,0);
+    } else if(size==1){
+        addBaseModule(x,z,40,100,20,0);
+    }else if(size==2){
+        addBaseModule(x,z,60,150,30,0);
+    }else if(size==3){
+        addBaseModule(x,z,80,200,40,0);
+    }else if(size==4){
+        addBaseModule(x,z,100,250,50,0);
+    }
+
+}
 //Movel 1
 //Floor
 let floorGeometry = new THREE.CubeGeometry(77.5, 5, 35);
@@ -908,9 +924,11 @@ function SceneEditor() {
     this.Y = 0;
     this.Z = 0;
     this.presets = -1;
+    this.size = -1;
     this.cameraMove = function () { moveCamera(self.X,self.Y,self.Z)};
     this.cameraMovePreset = function () { moveCameraPreset(self.presets)};
     this.addModule = function () { addBaseModule(self.xBasePos, self.zBasePos, self.xPos, self.yPos, self.zPos, self.material); };
+    this.addPresetModule = function () { addPresetBaseModule(self.size,self.xBasePos,self.zBasePos)};
     this.lightSwitch = function() { lightControl()};
     this.openCloseL = function(){ closeControlL()};
     this.openCloseR = function() { closeControlR()};
@@ -953,13 +971,20 @@ function displayGUI() {
 
     /**Basic Module Add */
     var addModuleFolder = gui.addFolder('Add Base Module');
-    addModuleFolder.add(sceneEditor, 'xBasePos', -300, 300).name("XBASE");
-    addModuleFolder.add(sceneEditor, 'zBasePos', -300, 200).name("ZBASE");
-    addModuleFolder.add(sceneEditor, 'xPos', 0, 250).name("Width");
-    addModuleFolder.add(sceneEditor, 'yPos', 0, 300).name("Heigth");
-    addModuleFolder.add(sceneEditor, 'zPos', 0, 250).name("Depth");
-    addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
-    addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
+    var addModuleManualFolder = addModuleFolder.addFolder('Add Manual');
+    addModuleManualFolder.add(sceneEditor, 'xBasePos', -300, 300).name("XBASE");
+    addModuleManualFolder.add(sceneEditor, 'zBasePos', -300, 200).name("ZBASE");
+    addModuleManualFolder.add(sceneEditor, 'xPos', 0, 250).name("Width");
+    addModuleManualFolder.add(sceneEditor, 'yPos', 0, 300).name("Heigth");
+    addModuleManualFolder.add(sceneEditor, 'zPos', 0, 250).name("Depth");
+    addModuleManualFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
+    addModuleManualFolder.add(sceneEditor, 'addModule').name('Add Module');
+
+    let addModulePresetFolder = addModuleFolder.addFolder('Add Preset');
+    addModulePresetFolder.add(sceneEditor, 'xBasePos', -300, 300).name("XBASE");
+    addModulePresetFolder.add(sceneEditor, 'zBasePos', -300, 200).name("ZBASE");
+    addModulePresetFolder.add(sceneEditor, 'size', { Choose: -1, XS: 0, S: 1, M: 2, L: 3, XL: 4}).name('Size');
+    addModulePresetFolder.add(sceneEditor, 'addPresetModule').name('Add Module');
 
     let baseModuleFolder = gui.addFolder('Base Module Config');
     //add the comboBox here
