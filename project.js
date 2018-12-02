@@ -963,7 +963,7 @@ function SceneEditor() {
     this.modules = -1;
     this.materials = -1;
     this.yMPos = 0;
-    this.addAdvancedModule = function () { addAdvModule(self.yMPos, self.modules, self.mmaterial) };
+    this.addAdvancedModule = function () { addAdvModule(self.yMPos, self.modules, self.materials) };
 }
 
 var sceneEditor = new SceneEditor();
