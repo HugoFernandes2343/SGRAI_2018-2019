@@ -200,7 +200,7 @@ function addBaseModule(xbase, zbase, x, y, z, texture) {
     //Left Wall
     let leftWallGeometry = new THREE.CubeGeometry(2.5, y+2, z);
     let leftWall = new THREE.Mesh(leftWallGeometry, choosenMaterial);
-    leftWall.position.x = - x/2;
+    leftWall.position.x = - x/2 -1;
     leftWall.position.y += y/2 -1;
 
     //Right Wall
@@ -336,7 +336,7 @@ let shelf4Material = new THREE.MeshLambertMaterial({
 let shelf4 = new THREE.Mesh(shelf4Geometry, shelf4Material);
 shelf4.position.z = 1.75;
 shelf4.position.y = 75;
-scene.add(shelf4);
+//scene.add(shelf4);
 
 //GLASS
 let shelfGlassGeometry = new THREE.CubeGeometry(77.5, 1, 31.5);
@@ -524,7 +524,72 @@ scene.add(door2D);
 
 //door knobs
 
+//pole
+var geometry1234 = new THREE.CylinderBufferGeometry(2.5, 2.5, x, 32);
+    var material1234 = new THREE.MeshLambertMaterial({
+        map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
+        side: THREE.DoubleSide,
+        emissive: null
+    });
+    var cylinder = new THREE.Mesh(geometry1234, material1234);
+    cylinder.position.y = y - 10;
+    cylinder.rotation.z = Math.PI / 2;
 
+//drawer
+let drawerBottomGeometry = new THREE.CubeGeometry(77.5, 2, 31.5);
+let drawerBottomMaterial = new THREE.MeshLambertMaterial({
+    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+    side: THREE.DoubleSide,
+    emissive: null
+});
+let drawerSideGeometry = new THREE.CubeGeometry(12.5, 2, 27.5);
+let drawerSideMaterial = new THREE.MeshLambertMaterial({
+    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+    side: THREE.DoubleSide,
+    emissive: null
+});
+
+let drawerFrontGeometry = new THREE.CubeGeometry(77.5, 2, 12.5);
+let drawerFrontMaterial = new THREE.MeshLambertMaterial({
+    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+    side: THREE.DoubleSide,
+    emissive: null
+});
+
+let drawerBottom = new THREE.Mesh(drawerBottomGeometry, drawerBottomMaterial);
+drawerBottom.position.z = 1.75;
+drawerBottom.position.y = 75;
+
+let drawerRight = new THREE.Mesh(drawerSideGeometry, drawerSideMaterial);
+drawerRight.position.z = 1.75;
+drawerRight.position.y = 82;
+drawerRight.rotation.z += Math.PI / 2;
+drawerRight.position.x = 37.75;
+
+let drawerLeft = new THREE.Mesh(drawerSideGeometry, drawerSideMaterial);
+drawerLeft.position.z = 1.75;
+drawerLeft.position.y = 82;
+drawerLeft.rotation.z += Math.PI / 2;
+drawerLeft.position.x = -37.75;
+
+let drawerFront = new THREE.Mesh(drawerFrontGeometry, drawerFrontMaterial);
+drawerFront.position.z = 16.50;
+drawerFront.position.y = 82;
+drawerFront.rotation.x += Math.PI / 2;
+
+let drawerBack = new THREE.Mesh(drawerFrontGeometry, drawerFrontMaterial);
+drawerBack.position.z = -13;
+drawerBack.position.y = 82;
+drawerBack.rotation.x += Math.PI / 2;
+
+var drawer = new THREE.Object3D();
+drawer.add(drawerBottom);
+drawer.add(drawerRight);
+drawer.add(drawerLeft);
+drawer.add(drawerFront);
+drawer.add(drawerBack);
+
+scene.add(drawer);
 
 //Group door right
 var rightDoor = new THREE.Object3D();
