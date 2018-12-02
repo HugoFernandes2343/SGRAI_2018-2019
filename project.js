@@ -51,47 +51,6 @@ document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
-/*Textures*/
-let woodTexture = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
-    side: THREE.DoubleSide,
-    emissive: null
-});
-let oakTexture = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
-    side: THREE.DoubleSide,
-    emissive: null
-});
-let aluminumTexture = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
-    side: THREE.DoubleSide,
-    emissive: null
-});
-let mozaicTexture = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
-    side: THREE.DoubleSide,
-    emissive: null
-});
-let marbleTexture = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
-    side: THREE.DoubleSide,
-    emissive: null
-});
-var glassTexture = new THREE.MeshLambertMaterial({
-    color: 0xA8CCD7,
-    refractionRatio: 0.5,
-    reflectivity: 0.99,
-    emissive: null
-});
-glassTexture.transparent = true;
-glassTexture.opacity = 0.4;
-selectableTextures[0] = woodTexture;
-selectableTextures[1] = oakTexture;
-selectableTextures[2] = aluminumTexture;
-selectableTextures[3] = mozaicTexture;
-selectableTextures[4] = marbleTexture;
-selectableTextures[5] = glassTexture;
-
 
 /*rAYCASTER VARIABLES*/
 var raycaster = new THREE.Raycaster();
@@ -170,36 +129,91 @@ camera.rotation.x -= 0.3;
 
 //Add a base module
 function addBaseModule(xbase, zbase, x, y, z, texture) {
-
+   
     let baseModule = new THREE.Object3D();
+    let choosenMaterial;
+    if (texture == -1) {
+        return
+    }
+    if (texture == 0) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 1) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 2) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 3) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 4) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 5) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            color: 0xA8CCD7,
+            refractionRatio: 0.5,
+            reflectivity: 0.99,
+            emissive: null
+        });
+        choosenMaterial.transparent = true;
+        choosenMaterial.opacity = 0.4;
+
+    }
 
     //Floor
-    let floorGeometry = new THREE.CubeGeometry(77.5, 5, 35);
-    let floor = new THREE.Mesh(floorGeometry, selectableTextures[texture]);
+    let floorGeometry = new THREE.CubeGeometry(x, 5, z);
+    let floor = new THREE.Mesh(floorGeometry, choosenMaterial);
     floor.position.y = 1.5;
 
     //Ceiling
-    let ceilingGeometry = new THREE.CubeGeometry(77.5, 2.5, 35);
-    let ceiling = new THREE.Mesh(ceilingGeometry, selectableTextures[texture]);
-    ceiling.position.y = 199.75;
+    let ceilingGeometry = new THREE.CubeGeometry(x, 2.5, z);
+    let ceiling = new THREE.Mesh(ceilingGeometry, choosenMaterial);
+    ceiling.position.y = y-1.25;
 
     //Left Wall
-    let leftWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
-    let leftWall = new THREE.Mesh(leftWallGeometry, selectableTextures[texture]);
-    leftWall.position.x = 40;
-    leftWall.position.y = 100;
+    let leftWallGeometry = new THREE.CubeGeometry(2.5, y+2, z);
+    let leftWall = new THREE.Mesh(leftWallGeometry, choosenMaterial);
+    leftWall.position.x = - x/2;
+    leftWall.position.y += y/2 -1;
 
     //Right Wall
-    let rightWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
-    let rightWall = new THREE.Mesh(rightWallGeometry, selectableTextures[texture]);
-    rightWall.position.x = -40;
-    rightWall.position.y = 100;
+    let rightWallGeometry = new THREE.CubeGeometry(2.5, y+2, z);
+    let rightWall = new THREE.Mesh(rightWallGeometry, choosenMaterial);
+    rightWall.position.x = x / 2 +1;
+    rightWall.position.y += y/2 -1;
 
     //Back Wall
-    let backWallGeometry = new THREE.CubeGeometry(77.5, 200, 2);
-    let backWall = new THREE.Mesh(backWallGeometry, selectableTextures[texture]);
-    backWall.position.z = -15;
-    backWall.position.y = 100;
+    let backWallGeometry = new THREE.CubeGeometry(x, y, 2);
+    let backWall = new THREE.Mesh(backWallGeometry, choosenMaterial);
+    backWall.position.z -= z/2 -1;
+    backWall.position.y += y/2 -1;
 
     baseModule.add(backWall,
         rightWall, leftWall, ceiling, floor);
@@ -843,9 +857,9 @@ function displayGUI() {
     var addModuleFolder = gui.addFolder('Add Base Module');
     addModuleFolder.add(sceneEditor, 'xBasePos', -500, 500).name("XBASE");
     addModuleFolder.add(sceneEditor, 'zBasePos', -500, 500).name("ZBASE");
-    addModuleFolder.add(sceneEditor, 'xPos', -500, 500).name("Heigth");
-    addModuleFolder.add(sceneEditor, 'yPos', -500, 500).name("Width");
-    addModuleFolder.add(sceneEditor, 'zPos', -500, 500).name("Depth");
+    addModuleFolder.add(sceneEditor, 'xPos', 0, 350).name("Width");
+    addModuleFolder.add(sceneEditor, 'yPos', 0, 350).name("Heigth");
+    addModuleFolder.add(sceneEditor, 'zPos', 0, 350).name("Depth");
     addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
     
