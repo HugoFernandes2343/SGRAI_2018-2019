@@ -306,10 +306,7 @@ let woodStripR1Material = new THREE.MeshLambertMaterial({
 let woodStripR1 = new THREE.Mesh(woodStripR1Geometry, woodStripR1Material);
 woodStripR1.position.z = 18.5;
 woodStripR1.position.y = 137.5;
-woodStripR1.position.x = -20;
-woodStripR1.rotation.y = Math.PI / 2;
-woodStripR1.position.z += 3;
-woodStripR1.position.x -= 20;
+woodStripR1.position.x = -35.75;
 
 scene.add(woodStripR1);
 
@@ -324,10 +321,8 @@ let woodStripR2Material = new THREE.MeshLambertMaterial({
 let woodStripR2 = new THREE.Mesh(woodStripR2Geometry, woodStripR2Material);
 woodStripR2.position.z = 18.5;
 woodStripR2.position.y = 137.5;
-woodStripR2.position.x = -20;
-woodStripR2.rotation.y = Math.PI / 2;
-woodStripR2.position.z += 36;
-woodStripR2.position.x -= 20;
+woodStripR2.position.x = -2.75;
+
 
 scene.add(woodStripR2);
 
@@ -342,10 +337,8 @@ let woodStripR3Material = new THREE.MeshLambertMaterial({
 let woodStripR3 = new THREE.Mesh(woodStripR3Geometry, woodStripR3Material);
 woodStripR3.position.z = 18.5;
 woodStripR3.position.y = 200;
-woodStripR3.position.x = -20;
-woodStripR3.rotation.y = Math.PI / 2;
-woodStripR3.position.z += 20.25;
-woodStripR3.position.x -= 20;
+woodStripR3.position.x = -18.5;
+
 
 scene.add(woodStripR3);
 
@@ -363,10 +356,6 @@ let woodStripL1 = new THREE.Mesh(woodStripL1Geometry, woodStripL1Material);
 woodStripL1.position.z = 18.5;
 woodStripL1.position.y = 137.5;
 woodStripL1.position.x = 35.75;
-//woodStripL1.rotation.y = Math.PI/2;
-//woodStripL1.position.z+=3;
-//woodStripL1.position.x-=20;
-
 scene.add(woodStripL1);
 
 
@@ -381,10 +370,6 @@ let woodStripL2 = new THREE.Mesh(woodStripL2Geometry, woodStripL2Material);
 woodStripL2.position.z = 18.5;
 woodStripL2.position.y = 137.5;
 woodStripL2.position.x = 2.75;
-//woodStripL2.rotation.y = Math.PI/2;
-//woodStripL2.position.z+=36;
-//woodStripL2.position.x-=20;
-
 scene.add(woodStripL2);
 
 
@@ -399,10 +384,6 @@ let woodStripL3 = new THREE.Mesh(woodStripL3Geometry, woodStripL3Material);
 woodStripL3.position.z = 18.5;
 woodStripL3.position.y = 200;
 woodStripL3.position.x = 18.5;
-//woodStripL3.rotation.y = Math.PI/2;
-//woodStripL3.position.z+=20.25;
-//woodStripL3.position.x-=20;
-
 scene.add(woodStripL3);
 
 
@@ -421,10 +402,8 @@ glassStripRMaterial.opacity = 0.4;
 let glassStripR = new THREE.Mesh(glassStripRGeometry, glassStripRMaterial);
 glassStripR.position.z = 18.5;
 glassStripR.position.y = 136.5;
-glassStripR.position.x = -20;
-glassStripR.rotation.y = Math.PI / 2;
-glassStripR.position.z += 20.25;
-glassStripR.position.x -= 20;
+glassStripR.position.x = -18.5;
+
 
 scene.add(glassStripR);
 
@@ -445,10 +424,6 @@ let glassStripL = new THREE.Mesh(glassStripLGeometry, glassStripLMaterial);
 glassStripL.position.z = 18.5;
 glassStripL.position.y = 136.5;
 glassStripL.position.x = 18.5;
-//glassStripL.rotation.y = Math.PI/2;
-//glassStripL.position.z+=20.25;
-//glassStripL.position.x-=20;
-
 scene.add(glassStripL);
 
 
@@ -463,9 +438,6 @@ let door1D = new THREE.Mesh(door1DGeometry, door1DMaterial);
 door1D.position.z = 18.5;
 door1D.position.y = 38.5;
 door1D.position.x = -20;
-door1D.rotation.y = Math.PI / 2;
-door1D.position.z += 18.75;
-door1D.position.x -= 20;
 scene.add(door1D);
 
 let door2DGeometry = new THREE.CubeGeometry(39.5, 71, 2);
@@ -482,14 +454,7 @@ scene.add(door2D);
 
 //door knobs
 
-//Cabinet "Casket"
-let cabinet = new THREE.Object3D();
-cabinet.add(door2D,
-    glassStripL, woodStripL3,
-    woodStripL2, woodStripL1, shelfGlass,
-    shelf4, shelf3, shelf2, shelf1, backWall,
-    rightWall, leftWall, ceiling, floor);
-scene.add(cabinet);
+
 
 //Group door right
 var rightDoor = new THREE.Object3D();
@@ -509,6 +474,13 @@ leftDoor.add(glassStripL);
 leftDoor.add(door2D);
 scene.add(leftDoor);
 
+//Cabinet "Casket"
+let cabinet = new THREE.Object3D();
+cabinet.add(shelfGlass,
+    shelf4, shelf3, shelf2, shelf1, backWall,
+    rightWall, leftWall, ceiling, floor);
+scene.add(cabinet);
+
 addShadowCastingAndReciever(cabinet);
 addShadowCastingAndReciever(rightDoor);
 addShadowCastingAndReciever(leftDoor);
@@ -517,9 +489,46 @@ addShadowCastingAndReciever(leftDoor);
 selectableObjects.push(rightDoor, leftDoor, cabinet);
 
 
+/**
+// Sphere Geometry 1
+pivotRightGeometry1 = new THREE.BoxGeometry(1.5, 3, 0);
+
+// Sphere Material 1
+pivotRightMaterial1 = new THREE.MeshLambertMaterial({
+    color: 0xfccdd3
+});
+
+// Sphere Mesh 1
+pivotRightMesh1 = new THREE.Mesh(pivotRightGeometry1, pivotRightMaterial1);
+pivotRightMesh1.receiveShadow = true;
+pivotRightMesh1.position.set((-19.5*2),0,18.5);
+scene.add(pivotRightMesh1);
+
+// Pivot point
+pivotPoint = new THREE.Object3D();
+pivotRightMesh1.add(pivotPoint);
+
+// Sphere Geometry 2
+sphereGeometry2 = new THREE.SphereBufferGeometry(30, 20, 20);
+
+// Sphere Material 2
+sphereMaterial2 = new THREE.MeshLambertMaterial({
+    color: 0x6ed3cf
+});
+
+// Sphere Mesh 2
+sphereMesh2 = new THREE.Mesh(sphereGeometry2, sphereMaterial2);
+
+// Position from pivot point to sphere 2
+sphereMesh2.position.set(260,100, 300);
+
+// make the pivotpoint the sphere's parent.
+pivotPoint.add(rightDoor);
+
+*/
 
 //Lights
-let ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
+let ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
 scene.add(ambientLight);
 
 let light1 = new THREE.PointLight(0xFF0040, 4, 50);
@@ -527,11 +536,11 @@ let light1 = new THREE.PointLight(0xFF0040, 4, 50);
 
 //RED SPOTLIGHT
 let spotlight1 = new THREE.SpotLight(0xFFFFFF, 1);
-spotlight1.position.set(0, 450, 350);
+spotlight1.position.set(0, 390, 350);
 spotlight1.lookAt(0, 0, 0);
 spotlight1.castShadow = true;
 spotlight1.shadowCameraVisible = true;
-spotlight1.shadowDarkness = 1;
+spotlight1.shadowDarkness = 0.7;
 scene.add(spotlight1);
 
 //WHITE SPOTLIGHT
@@ -652,26 +661,41 @@ function rotateLights() {
 
 
 function closeControlR() {
-    if (!(rightDoor.position.z == -21.5)) {
-        rightDoor.position.z -= 21.5;
-        rightDoor.position.x -= 57;
-        rightDoor.rotation.y = Math.PI / 2;
+    if (!(rightDoor.position.z == 17.25)) {
+       // rightDoor.position.set(rightDoor.position.x - 58.5,rightDoor.position.y,rightDoor.position.z +17.25 );
+        rightDoor.position.z += 17.25;
+        rightDoor.position.x -= 58.5;
+        rightDoor.rotateSpeed = 0.000001;
+        rightDoor.rotation.y += Math.PI / 2;
+
+          //  pivotPoint.rotateSpeed =0.005;
+            //pivotPoint.rotation.y = -Math.PI/2;
+
+
+
+
+      //  rightDoor.translateY(0.5);
+       // pivotPoint.autoUpdate();
     } else {
-        rightDoor.position.z += 21.5;
-        rightDoor.position.x += 57;
+        rightDoor.position.z -= 17.25;
+        rightDoor.position.x += 58.5;
+        rightDoor.rotateSpeed = 0.000001;
         rightDoor.rotation.y -= Math.PI / 2;
     }
+
 }
 
 
 function closeControlL() {
     if (!(leftDoor.position.z == 17.25)) {
-        leftDoor.position.z = 17.25;
-        leftDoor.position.x = 58.5;
-        leftDoor.rotation.y = -Math.PI / 2;
+        leftDoor.position.z += 17.25;
+        leftDoor.position.x += 58.5;
+        leftDoor.rotateSpeed = 0.000001;
+        leftDoor.rotation.y -= Math.PI / 2;
     } else {
         leftDoor.position.z -= 17.25;
         leftDoor.position.x -= 58.5;
+        leftDoor.rotateSpeed = 0.000001;
         leftDoor.rotation.y += Math.PI / 2;
     }
 }
