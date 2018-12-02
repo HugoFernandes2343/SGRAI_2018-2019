@@ -4,6 +4,8 @@ let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHei
 let selectableObjects = [];
 let predefinedDimensions = [];
 let selectableTextures = [];
+let currentlyPickedObject = new THREE.Object3D();
+
 
 let pickingMode = false;
 
@@ -713,11 +715,22 @@ function onMouseMove(event) {
 }
 
 //mouse onClick pick
-window.addEventListener('click', onMouseClickPick, false);
+window.addEventListener('dblclick', onMouseClickPick, false);
 function onMouseClickPick(event) {
     event.preventDefault();
-    this.pickingMode = false;
-    //INTERSECTED ETC
+    if(pickingMode === true){
+        pickingMode = false;
+        if(INTERSECTED.parent != null && INTERSECTED.parent !== undefined){
+            currentlyPickedObject = INTERSECTED.parent;
+            alert("Selected "+INTERSECTED.parent.name+".");//TESTING PURPOSES
+        }
+
+        //INTERSECTED ETC
+    }else{
+        //Do Nothing and keep executing normal functions
+    }
+
+
 }
 
 let picking = function () {
