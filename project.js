@@ -130,61 +130,10 @@ function addBaseModule(xbase, zbase, x, y, z, texture) {
    
     let baseModule = new THREE.Object3D();
     baseModule.name = moduleTypes[0];
-    let choosenMaterial;
     if (texture == -1) {
         return
     }
-    if (texture == 0) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 1) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 2) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 3) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 4) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 5) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            color: 0xA8CCD7,
-            refractionRatio: 0.5,
-            reflectivity: 0.99,
-            emissive: null
-        });
-        choosenMaterial.transparent = true;
-        choosenMaterial.opacity = 0.4;
-
-    }
+    let choosenMaterial = chooseMaterial(texture);
 
     //Floor
     let floorGeometry = new THREE.CubeGeometry(x, 5, z);
@@ -823,62 +772,11 @@ function addAdvModule(y, module, texture){
         INTERSECTED.parent == null || INTERSECTED.parent === undefined){
         alert("No Model/Module was picked!");
     }
-
-    let choosenMaterial;
+    
     if (texture == -1) {
         return
     }
-    if (texture == 0) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 1) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 2) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 3) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 4) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
-            side: THREE.DoubleSide,
-            emissive: null
-        });
-
-    }
-    if (texture == 5) {
-        choosenMaterial = new THREE.MeshLambertMaterial({
-            color: 0xA8CCD7,
-            refractionRatio: 0.5,
-            reflectivity: 0.99,
-            emissive: null
-        });
-        choosenMaterial.transparent = true;
-        choosenMaterial.opacity = 0.4;
-
-    }
+    let choosenMaterial = chooseMaterial(texture);
 
     if (module == -1) {
         return
@@ -996,6 +894,63 @@ let picking = function () {
 window.onload = function () {
     displayGUI();
 };
+
+function chooseMaterial(texture) {
+    let choosenMaterial;
+
+    if (texture == 0) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureWood.png'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 1) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureOak.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 2) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 3) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMozaic.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 4) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            map: new THREE.TextureLoader().load('imgs/TestTextureMarble.jpg'),
+            side: THREE.DoubleSide,
+            emissive: null
+        });
+
+    }
+    if (texture == 5) {
+        choosenMaterial = new THREE.MeshLambertMaterial({
+            color: 0xA8CCD7,
+            refractionRatio: 0.5,
+            reflectivity: 0.99,
+            emissive: null
+        });
+        choosenMaterial.transparent = true;
+        choosenMaterial.opacity = 0.4;
+
+    }
+    return choosenMaterial;
+}
 
 function SceneEditor() {
     self = this;
