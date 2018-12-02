@@ -138,32 +138,32 @@ function addBaseModule(xbase, zbase, x, y, z, texture) {
     let baseModule = new THREE.Object3D();
 
     //Floor
-    let floorGeometry = new THREE.CubeGeometry(77.5, 5, 35);
+    let floorGeometry = new THREE.CubeGeometry(x, 5, z);
     let floor = new THREE.Mesh(floorGeometry, selectableTextures[texture]);
     floor.position.y = 1.5;
 
     //Ceiling
-    let ceilingGeometry = new THREE.CubeGeometry(77.5, 2.5, 35);
+    let ceilingGeometry = new THREE.CubeGeometry(x, 2.5, z);
     let ceiling = new THREE.Mesh(ceilingGeometry, selectableTextures[texture]);
-    ceiling.position.y = 199.75;
+    ceiling.position.y = y-1.25;
 
     //Left Wall
-    let leftWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
+    let leftWallGeometry = new THREE.CubeGeometry(2.5, y+2, z);
     let leftWall = new THREE.Mesh(leftWallGeometry, selectableTextures[texture]);
-    leftWall.position.x = 40;
-    leftWall.position.y = 100;
+    leftWall.position.x = - x/2;
+    leftWall.position.y += y/2 -1;
 
     //Right Wall
-    let rightWallGeometry = new THREE.CubeGeometry(2.5, 202, 35);
+    let rightWallGeometry = new THREE.CubeGeometry(2.5, y+2, z);
     let rightWall = new THREE.Mesh(rightWallGeometry, selectableTextures[texture]);
-    rightWall.position.x = -40;
-    rightWall.position.y = 100;
+    rightWall.position.x = x / 2 +1;
+    rightWall.position.y += y/2 -1;
 
     //Back Wall
-    let backWallGeometry = new THREE.CubeGeometry(77.5, 200, 2);
+    let backWallGeometry = new THREE.CubeGeometry(x, y, 2);
     let backWall = new THREE.Mesh(backWallGeometry, selectableTextures[texture]);
-    backWall.position.z = -15;
-    backWall.position.y = 100;
+    backWall.position.z -= z/2 -1;
+    backWall.position.y += y/2 -1;
 
     baseModule.add(backWall,
         rightWall, leftWall, ceiling, floor);
@@ -807,9 +807,9 @@ function displayGUI() {
     var addModuleFolder = gui.addFolder('Add Base Module');
     addModuleFolder.add(sceneEditor, 'xBasePos', -500, 500).name("XBASE");
     addModuleFolder.add(sceneEditor, 'zBasePos', -500, 500).name("ZBASE");
-    addModuleFolder.add(sceneEditor, 'xPos', -500, 500).name("Heigth");
-    addModuleFolder.add(sceneEditor, 'yPos', -500, 500).name("Width");
-    addModuleFolder.add(sceneEditor, 'zPos', -500, 500).name("Depth");
+    addModuleFolder.add(sceneEditor, 'xPos', 0, 350).name("Heigth");
+    addModuleFolder.add(sceneEditor, 'yPos', 0, 350).name("Width");
+    addModuleFolder.add(sceneEditor, 'zPos', 0, 350).name("Depth");
     addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
     
