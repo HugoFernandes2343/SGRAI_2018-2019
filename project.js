@@ -816,14 +816,13 @@ function addAdvModule(y, module, texture){
         newModule.position.y = y;
         newModule.rotation.z = Math.PI / 2;
     }
+    addShadowCastingAndReciever(newModule);
     currentlyPickedObject.add(newModule);
     //add a switch case maybe??
     //baseado no modelo, adicionar dentro do modelo pai (INTERSECTED.parent)
     //variaveis necessarias devem ja estar globais
 
 }
-
-
 
 function buildDrawer(width, depth1, material){
 
@@ -875,6 +874,15 @@ function buildDrawer(width, depth1, material){
     drawer.name = moduleTypes[2];
     drawer.position.z += thickness/2;
     return drawer;
+}
+
+function deleteModuleFromScene(){
+    if (pickingMode === false && (currentlyPickedObject != null || currentlyPickedObject!==undefined) ) {
+        selectableObjects.pop(currentlyPickedObject);
+       scene.remove(currentlyPickedObject);
+    }else {
+        alert("No Module Selected!");
+    }
 }
 
 //mouse over pick
@@ -994,6 +1002,7 @@ function SceneEditor() {
     this.materials = -1;
     this.yMPos = 0;
     this.addAdvancedModule = function () { addAdvModule(self.yMPos, self.modules, self.materials) };
+    this.deleteFromScene = function() { deleteModuleFromScene() };
 }
 
 var sceneEditor = new SceneEditor();
@@ -1045,10 +1054,12 @@ function displayGUI() {
 
     let baseModuleFolder = gui.addFolder('Base Module Config');
     //add the comboBox here
-    baseModuleFolder.add(sceneEditor, 'yMPos', 0, 300).name("Heigth");
+    baseModuleFolder.add(sceneEditor, 'yMPos', 0, 300).name("Height");
     baseModuleFolder.add(sceneEditor, 'modules', { Choose: -1, Drawer: 0, Shelf: 1, Rod: 2 });
     baseModuleFolder.add(sceneEditor, 'materials', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     baseModuleFolder.add(sceneEditor,'addAdvancedModule').name('Add Selected Module');
+
+    gui.add(sceneEditor,'deleteFromScene').name('Delete Selected Module');
 }
 
 //mouse onClick pick
