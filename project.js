@@ -516,7 +516,7 @@ scene.add(door2D);
 
 //door knobs
 
-//pole
+/*//pole
 var geometry1234 = new THREE.CylinderBufferGeometry(2.5, 2.5, x, 32);
     var material1234 = new THREE.MeshLambertMaterial({
         map: new THREE.TextureLoader().load('imgs/TestTextureAluminum.jpg'),
@@ -525,7 +525,12 @@ var geometry1234 = new THREE.CylinderBufferGeometry(2.5, 2.5, x, 32);
     });
     var cylinder = new THREE.Mesh(geometry1234, material1234);
     cylinder.position.y = y - 10;
-    cylinder.rotation.z = Math.PI / 2;
+    cylinder.rotation.z = Math.PI / 2;*/
+
+/*//estante
+let estanteGeometry = new THREE.CubeGeometry(x, 2.5, z);
+let estante = new THREE.Mesh(estanteGeometry, choosenMaterial);
+estante.position.y = y / 2;*/
 
 //drawer
 let drawerBottomGeometry = new THREE.CubeGeometry(77.5, 2, 31.5);
