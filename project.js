@@ -821,8 +821,8 @@ function displayGUI() {
     var addModuleFolder = gui.addFolder('Add Base Module');
     addModuleFolder.add(sceneEditor, 'xBasePos', -500, 500).name("XBASE");
     addModuleFolder.add(sceneEditor, 'zBasePos', -500, 500).name("ZBASE");
-    addModuleFolder.add(sceneEditor, 'xPos', 0, 350).name("Heigth");
-    addModuleFolder.add(sceneEditor, 'yPos', 0, 350).name("Width");
+    addModuleFolder.add(sceneEditor, 'xPos', 0, 350).name("Width");
+    addModuleFolder.add(sceneEditor, 'yPos', 0, 350).name("Heigth");
     addModuleFolder.add(sceneEditor, 'zPos', 0, 350).name("Depth");
     addModuleFolder.add(sceneEditor, 'material', { Choose: -1, Wood: 0, Oak: 1, Aluminum: 2, Mozaic: 3, Marble: 4, Glass: 5 });
     addModuleFolder.add(sceneEditor, 'addModule').name('Add Module');
